@@ -10,7 +10,7 @@ function PrivateRoute({ path, component: Component, exact }: any) {
   console.log("Navigating to : ", path);
 
   return isLoggedIn ? (
-    <Route path={path} element={Component} />
+    <Route exact path={path} component={Component} />
   ) : (
     <Redirect to="/" />
   );
