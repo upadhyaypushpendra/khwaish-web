@@ -1,10 +1,10 @@
 import * as React from "react";
+import { phone } from "phone";
+import { useSnackbar } from "notistack";
 import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
 import CssBaseline from "@mui/material/CssBaseline";
 import TextField from "@mui/material/TextField";
-import FormControlLabel from "@mui/material/FormControlLabel";
-import Checkbox from "@mui/material/Checkbox";
 import Link from "@mui/material/Link";
 import Grid from "@mui/material/Grid";
 import Box from "@mui/material/Box";
@@ -13,14 +13,26 @@ import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import Copyright from "../components/Copyright";
 
-export default function SignIn() {
+export default function Signup() {
+  const snackbar = useSnackbar();
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
     // eslint-disable-next-line no-console
+    const { isValid, phoneNumber } = phone(data.get("phone") as string);
+
+    if (!isValid) {
+      snackbar.enqueueSnackbar("Please enter a valid phone number", {
+        variant: "error"
+      });
+      return false;
+    }
+
     console.log({
-      email: data.get("email"),
-      password: data.get("password")
+      phone: phoneNumber,
+      password: data.get("password"),
+      name: data.get("name"),
+      about: data.get("about")
     });
   };
 
@@ -38,19 +50,20 @@ export default function SignIn() {
         <Avatar sx={{ m: 1, bgcolor: "secondary.main" }}>
           <LockOutlinedIcon />
         </Avatar>
-        <Typography component="h1" variant="h5">
-          Sign in
+        <Typography component="h1" variant="h6">
+          Lets get some details for Khwaish
         </Typography>
-        <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
+        <Box component="form" onSubmit={handleSubmit} sx={{ mt: 1 }}>
           <TextField
             margin="normal"
             required
             fullWidth
-            id="email"
-            label="Email Address"
-            name="email"
-            autoComplete="email"
+            id="phone"
+            label="Phone Address"
+            name="phone"
+            autoComplete="phone"
             autoFocus
+            placeholder="Your phone number please.."
           />
           <TextField
             margin="normal"
@@ -60,11 +73,29 @@ export default function SignIn() {
             label="Password"
             type="password"
             id="password"
-            autoComplete="current-password"
+            placeholder="Set a strong password.."
           />
-          <FormControlLabel
-            control={<Checkbox value="remember" color="primary" />}
-            label="Remember me"
+          <TextField
+            margin="normal"
+            fullWidth
+            id="name"
+            label="Name"
+            name="name"
+            autoComplete="name"
+            placeholder="Get set your name?"
+            variant="outlined"
+          />
+          <TextField
+            margin="normal"
+            fullWidth
+            id="about"
+            label="About"
+            name="about"
+            placeholder="Lets add something about you?"
+            multiline
+            InputProps={{
+              rows: 3
+            }}
           />
           <Button
             type="submit"
@@ -72,17 +103,12 @@ export default function SignIn() {
             variant="contained"
             sx={{ mt: 3, mb: 2 }}
           >
-            Sign In
+            Signup for Kwaish
           </Button>
           <Grid container>
             <Grid item xs>
-              <Link href="/reset-password" variant="body2">
-                Reset password?
-              </Link>
-            </Grid>
-            <Grid item>
-              <Link href="signup" variant="body2">
-                {"Don't have an account? Sign Up"}
+              <Link href="/" variant="body2">
+                {"Already have an account? Sign In"}
               </Link>
             </Grid>
           </Grid>
