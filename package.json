@@ -1,12 +1,8 @@
 {
-  "name": "react-typescript",
+  "name": "kwaish-web",
   "version": "1.0.0",
-  "description": "React and TypeScript example starter project",
-  "keywords": [
-    "typescript",
-    "react",
-    "starter"
-  ],
+  "description": "",
+  "keywords": [],
   "main": "src/index.tsx",
   "dependencies": {
     "@emotion/react": "11.7.1",
