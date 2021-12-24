@@ -1,7 +1,7 @@
 import React from "react";
 import shallow from "zustand/shallow";
 import { bool, string } from "prop-types";
-import { Route, Redirect } from "react-router-dom";
+import { Route, Navigate } from "react-router-dom";
 import useStore from "./../store";
 
 function PrivateRoute({ path, component: Component, exact }: any) {
@@ -10,9 +10,9 @@ function PrivateRoute({ path, component: Component, exact }: any) {
   console.log("Navigating to : ", path);
 
   return isLoggedIn ? (
-    <Route exact path={path} component={Component} />
+    <Route path={path} element={Component} />
   ) : (
-    <Redirect to="/" />
+    <Navigate replace to="/" />
   );
 }
 

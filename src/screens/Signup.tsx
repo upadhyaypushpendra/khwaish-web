@@ -13,8 +13,9 @@ import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import Copyright from "../components/Copyright";
 
-export default function Signup() {
+const Signup = (props: any) => {
   const snackbar = useSnackbar();
+
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
@@ -117,4 +118,6 @@ export default function Signup() {
       <Copyright sx={{ mt: 8, mb: 4 }} />
     </Container>
   );
-}
+};
+
+export default Signup;

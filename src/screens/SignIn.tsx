@@ -13,7 +13,7 @@ import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import Copyright from "../components/Copyright";
 
-export default function SignIn() {
+const SignIn = (props: any) => {
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
@@ -46,11 +46,12 @@ export default function SignIn() {
             margin="normal"
             required
             fullWidth
-            id="email"
-            label="Email Address"
-            name="email"
-            autoComplete="email"
+            id="phone"
+            label="Phone"
+            name="phone"
+            autoComplete="phone"
             autoFocus
+            placeholder="You phone here..."
           />
           <TextField
             margin="normal"
@@ -61,6 +62,7 @@ export default function SignIn() {
             type="password"
             id="password"
             autoComplete="current-password"
+            placeholder="Your password here..."
           />
           <FormControlLabel
             control={<Checkbox value="remember" color="primary" />}
@@ -91,4 +93,6 @@ export default function SignIn() {
       <Copyright sx={{ mt: 8, mb: 4 }} />
     </Container>
   );
-}
+};
+
+export default SignIn;

@@ -1,5 +1,5 @@
 import React from "react";
-import { BrowserRouter, Switch, Route } from "react-router-dom";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { ThemeProvider } from "@mui/material/styles";
 import { Box, Button, createTheme, PaletteMode } from "@mui/material";
 import { Close } from "@mui/icons-material";
@@ -60,11 +60,11 @@ const Screens = () => {
           />
         </Box>
         <BrowserRouter>
-          <Switch>
-            <Route path="/signup" children={Signup} />
-            <Route path="/reset-password" children={ForgotPassword} />
-            <Route path="/" children={SignIn} />
-          </Switch>
+          <Routes>
+            <Route path="/signup" element={<Signup />} />
+            <Route path="/reset-password" element={<ForgotPassword />} />
+            <Route path="*" element={<SignIn />} />
+          </Routes>
         </BrowserRouter>
       </SnackbarProvider>
     </ThemeProvider>

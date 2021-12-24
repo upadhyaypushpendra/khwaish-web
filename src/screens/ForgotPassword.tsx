@@ -11,7 +11,7 @@ import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import Copyright from "../components/Copyright";
 
-export default function ForgotPassword() {
+const ForgotPassword = () => {
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
@@ -94,4 +94,6 @@ export default function ForgotPassword() {
       <Copyright sx={{ mt: 8, mb: 4 }} />
     </Container>
   );
-}
+};
+
+export default ForgotPassword;
