@@ -59,13 +59,11 @@ const Screens = () => {
             onChange={colorMode.toggleColorMode}
           />
         </Box>
-        <BrowserRouter>
-          <Routes>
-            <Route path="/signup" element={<Signup />} />
-            <Route path="/reset-password" element={<ForgotPassword />} />
-            <Route path="*" element={<SignIn />} />
-          </Routes>
-        </BrowserRouter>
+        <Routes>
+          <Route path="/signup" element={<Signup />} />
+          <Route path="/reset-password" element={<ForgotPassword />} />
+          <Route path="/" element={<SignIn />} />
+        </Routes>
       </SnackbarProvider>
     </ThemeProvider>
   );
