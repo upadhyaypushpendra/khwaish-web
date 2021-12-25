@@ -11,6 +11,10 @@
     "@mui/core": "5.0.0-alpha.54",
     "@mui/icons-material": "5.2.5",
     "@mui/material": "5.2.5",
+    "@mui/styles": "5.2.3",
+    "chat-ui-react": "0.3.0",
+    "emoji-picker-react": "3.4.12",
+    "js-cookie": "3.0.1",
     "notistack": "2.0.3",
     "phone": "3.1.10",
     "react": "17.0.2",
@@ -20,6 +24,8 @@
     "zustand": "3.6.8"
   },
   "devDependencies": {
+    "@types/js-cookie": "3.0.1",
+    "@types/node": "17.0.4",
     "@types/react": "17.0.20",
     "@types/react-dom": "17.0.9",
     "@types/react-router-dom": "5.3.2",
@@ -31,5 +37,10 @@
     "test": "react-scripts test --env=jsdom",
     "eject": "react-scripts eject"
   },
-  "browserslist": [">0.2%", "not dead", "not ie <= 11", "not op_mini all"]
+  "browserslist": [
+    ">0.2%",
+    "not dead",
+    "not ie <= 11",
+    "not op_mini all"
+  ]
 }

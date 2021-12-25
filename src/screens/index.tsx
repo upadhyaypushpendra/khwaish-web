@@ -1,15 +1,18 @@
 import React from "react";
-import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { Route, Routes } from "react-router-dom";
 import { ThemeProvider } from "@mui/material/styles";
 import { Box, Button, createTheme, PaletteMode } from "@mui/material";
 import { Close } from "@mui/icons-material";
 import { SnackbarKey, SnackbarProvider } from "notistack";
 import { getThemeDesign } from "../theme";
 import ThemeSwitch from "../components/ThemeSwtich";
-// import PrivateRoute from "../components/PrivateRoute";
+import PrivateRoute from "../components/PrivateRoute";
+import { LoadingOverlayProvider } from "../components/LoadingOverlay";
+import App from "./App";
 import SignIn from "./SignIn";
 import ForgotPassword from "./ForgotPassword";
 import Signup from "./Signup";
+import SessionProvider from "../components/SessionProvider";
 
 const Screens = () => {
   const [mode, setMode] = React.useState<PaletteMode>("light");
@@ -36,35 +39,40 @@ const Screens = () => {
 
   return (
     <ThemeProvider theme={theme}>
-      <SnackbarProvider
-        ref={notistackRef}
-        action={(key) => (
-          <Button onClick={onClickDismiss(key)}>
-            <Close fontSize="small" />
-          </Button>
-        )}
-        hideIconVariant
-        maxSnack={3}
-      >
-        <Box
-          sx={{
-            position: "fixed",
-            right: 0,
-            top: 0
-          }}
+      <LoadingOverlayProvider>
+        <SnackbarProvider
+          ref={notistackRef}
+          action={(key) => (
+            <Button onClick={onClickDismiss(key)}>
+              <Close fontSize="small" />
+            </Button>
+          )}
+          hideIconVariant
+          maxSnack={3}
         >
-          <ThemeSwitch
-            sx={{ m: 1 }}
-            checked={mode === "dark"}
-            onChange={colorMode.toggleColorMode}
-          />
-        </Box>
-        <Routes>
-          <Route path="/signup" element={<Signup />} />
-          <Route path="/reset-password" element={<ForgotPassword />} />
-          <Route path="/" element={<SignIn />} />
-        </Routes>
-      </SnackbarProvider>
+          <SessionProvider>
+            <Box
+              sx={{
+                position: "fixed",
+                right: 0,
+                top: 0
+              }}
+            >
+              <ThemeSwitch
+                sx={{ m: 1 }}
+                checked={mode === "dark"}
+                onChange={colorMode.toggleColorMode}
+              />
+            </Box>
+            <Routes>
+              <PrivateRoute path="/" element={<App />} />
+              <Route path="/signup" element={<Signup />} />
+              <Route path="/reset-password" element={<ForgotPassword />} />
+              <Route path="/signin" element={<SignIn />} />
+            </Routes>
+          </SessionProvider>
+        </SnackbarProvider>
+      </LoadingOverlayProvider>
     </ThemeProvider>
   );
 };

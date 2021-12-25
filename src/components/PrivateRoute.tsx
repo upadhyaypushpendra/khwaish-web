@@ -1,31 +1,22 @@
 import React from "react";
-import shallow from "zustand/shallow";
 import { bool, string } from "prop-types";
-import { Route, Navigate } from "react-router-dom";
-import useStore from "./../store";
+import {
+  Route,
+  Navigate,
+  PathRouteProps,
+  LayoutRouteProps,
+  IndexRouteProps
+} from "react-router-dom";
+import Session from "../utils/Session";
 
-function PrivateRoute({ path, component: Component, exact }: any) {
-  const [isLoggedIn] = useStore((state) => [state.isLoggedIn], shallow);
-
-  console.log("Navigating to : ", path);
-
-  return isLoggedIn ? (
-    <Route path={path} element={Component} />
+function PrivateRoute(
+  props: PathRouteProps | LayoutRouteProps | IndexRouteProps
+) {
+  return Session.isLoggedIn() ? (
+    <Route {...props} />
   ) : (
-    <Navigate replace to="/" />
+    <Navigate replace to="/signin" />
   );
 }
-
-PrivateRoute.defaultProps = {
-  path: "",
-  component: null,
-  exact: false
-};
-
-PrivateRoute.propTypes = {
-  path: string,
-  component: Node,
-  exact: bool
-};
 
 export default PrivateRoute;
