@@ -65,7 +65,10 @@ const Screens = () => {
               />
             </Box>
             <Routes>
-              <PrivateRoute path="/" element={<App />} />
+              <Route
+                path="/"
+                element={<PrivateRoute path="/" element={<App />} />}
+              />
               <Route path="/signup" element={<Signup />} />
               <Route path="/reset-password" element={<ForgotPassword />} />
               <Route path="/signin" element={<SignIn />} />

@@ -1,5 +1,4 @@
 import React from "react";
-import { bool, string } from "prop-types";
 import {
   Route,
   Navigate,

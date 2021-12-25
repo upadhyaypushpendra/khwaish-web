@@ -82,6 +82,9 @@ function SessionProvider({ children }: any) {
         variant: "warning",
         onExited: goToSignIn
       });
+    } finally {
+      setLoading(false);
+      loadingOverlay.hideLoadingOverlay();
     }
   }
 
@@ -113,7 +116,7 @@ function SessionProvider({ children }: any) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  return loading ? <LoadingOverlay /> : <>{children}</>;
+  return <>{children}</>;
 }
 
 export default SessionProvider;
