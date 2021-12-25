@@ -19,22 +19,24 @@ const Signup = (props: any) => {
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
-    // eslint-disable-next-line no-console
-    const { isValid, phoneNumber } = phone(data.get("phone") as string);
+    if (Boolean(data.get("phone"))) {
+      const _phoneNumber = data.get("phone")?.toString() || "";
+      const { isValid, phoneNumber } = phone(_phoneNumber);
 
-    if (!isValid) {
-      snackbar.enqueueSnackbar("Please enter a valid phone number", {
-        variant: "error"
+      if (!isValid) {
+        snackbar.enqueueSnackbar("Please enter a valid phone number", {
+          variant: "error"
+        });
+        return false;
+      }
+      // eslint-disable-next-line no-console
+      console.log({
+        phone: phoneNumber,
+        password: data.get("password"),
+        name: data.get("name"),
+        about: data.get("about")
       });
-      return false;
     }
-
-    console.log({
-      phone: phoneNumber,
-      password: data.get("password"),
-      name: data.get("name"),
-      about: data.get("about")
-    });
   };
 
   return (
