@@ -16,10 +16,6 @@ function SessionProvider({ children }: any) {
 
   const navigate = useNavigate();
 
-  const location = useLocation();
-
-  const [loading, setLoading] = React.useState(true);
-
   const [reset] = useStore((state) => [state.reset], shallow);
 
   const isTokenExpiring = () =>
@@ -31,11 +27,7 @@ function SessionProvider({ children }: any) {
   const goToSignIn = async () => {
     await signOut();
 
-    navigate(
-      location.pathname.indexOf("live-classes") > -1
-        ? location.pathname
-        : "/signIn"
-    );
+    navigate("/signIn");
   };
 
   async function onLoad() {
@@ -60,9 +52,10 @@ function SessionProvider({ children }: any) {
         if (isTokenExpiring()) Session.accessToken = "";
         await restoreSession()
           .then((result) => {
-            snackbar.enqueueSnackbar("Signed In", {
+            snackbar.enqueueSnackbar("Signed-in to Khwaish", {
               variant: "success"
             });
+            navigate("/home");
           })
           .catch((err) => {
             snackbar.enqueueSnackbar("Uh Oh! You need to sign.", {
@@ -73,7 +66,6 @@ function SessionProvider({ children }: any) {
             navigate("/signin");
           })
           .finally(() => {
-            setLoading(false);
             loadingOverlay.hideLoadingOverlay();
           });
       }
@@ -83,7 +75,6 @@ function SessionProvider({ children }: any) {
         onExited: goToSignIn
       });
     } finally {
-      setLoading(false);
       loadingOverlay.hideLoadingOverlay();
     }
   }
@@ -107,13 +98,12 @@ function SessionProvider({ children }: any) {
 
   React.useEffect(() => {
     onLoad()
-      .then(() => setLoading(false))
-      .catch((e) => setLoading(false));
+      .then(() => loadingOverlay.hideLoadingOverlay())
+      .catch((e) => loadingOverlay.hideLoadingOverlay());
 
     const timerId = setInterval(setupRefresh, 3600000);
 
     return () => clearInterval(timerId);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return <>{children}</>;

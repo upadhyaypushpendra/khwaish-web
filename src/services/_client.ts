@@ -12,8 +12,7 @@ class Client {
 
   _options: Record<string, unknown>;
 
-  _baseUrl =
-    process.env.SERVER_URL || "https://local-book-store.herokuapp.com/chatUser";
+    _baseUrl = "http://localhost:9000"
 
   constructor({
     path = "",
@@ -34,7 +33,6 @@ class Client {
 
     this._options = {
       ...JSON.parse(JSON.stringify(options)),
-      credentials: "include",
       headers: {
         "Content-Type": "application/json",
         userId: Session.userId,

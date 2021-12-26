@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { phone } from "phone";
 import { useSnackbar } from "notistack";
 import Avatar from "@mui/material/Avatar";
@@ -12,30 +12,48 @@ import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import Copyright from "../components/Copyright";
+import { useLoadingOverlay } from "../components/LoadingOverlay";
+import { signup } from "../services/auth";
+import { validatePassword } from "../utils";
 
-const Signup = (props: any) => {
+const Signup = () => {
   const snackbar = useSnackbar();
+  const loadingOvelay = useLoadingOverlay();
+  const navigate = useNavigate();
 
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    const data = new FormData(event.currentTarget);
-    if (Boolean(data.get("phone"))) {
-      const _phoneNumber = data.get("phone")?.toString() || "";
-      const { isValid, phoneNumber } = phone(_phoneNumber);
+    loadingOvelay.showLoadingOverlay("Signing you in...");
+    try {
+      const formData = new FormData(event.currentTarget);
+      const _phoneNumber = formData.get("phone")?.toString();
+      const password = formData.get("password")?.toString();
+      const name = formData.get("name")?.toString();
+      const about = formData.get("about")?.toString();
 
-      if (!isValid) {
-        snackbar.enqueueSnackbar("Please enter a valid phone number", {
-          variant: "error"
-        });
-        return false;
+      if (_phoneNumber && password) {
+        const { isValid, phoneNumber } = phone(_phoneNumber);
+
+        if (validatePassword(password)) {
+          snackbar.enqueueSnackbar('Please enter a valid password', {
+            variant: "error",
+          });
+          return;
+        }
+
+        if (isValid && phoneNumber) {
+          await signup({ phone: phoneNumber, password, name, about });
+          navigate("/home");
+        } else {
+          snackbar.enqueueSnackbar('Please enter a valid phone number', {
+            variant: "error",
+          })
+        }
       }
-      // eslint-disable-next-line no-console
-      console.log({
-        phone: phoneNumber,
-        password: data.get("password"),
-        name: data.get("name"),
-        about: data.get("about")
-      });
+    } catch (error) {
+      snackbar.enqueueSnackbar(error?.message || "Unable to sign up! Please try again.", { variant: "error" });
+    } finally {
+      loadingOvelay.hideLoadingOverlay();
     }
   };
 
@@ -66,7 +84,7 @@ const Signup = (props: any) => {
             name="phone"
             autoComplete="phone"
             autoFocus
-            placeholder="Your phone number please.."
+            placeholder="Your phone number please..."
           />
           <TextField
             margin="normal"
@@ -76,7 +94,7 @@ const Signup = (props: any) => {
             label="Password"
             type="password"
             id="password"
-            placeholder="Set a strong password.."
+            placeholder="Set a strong password..."
           />
           <TextField
             margin="normal"

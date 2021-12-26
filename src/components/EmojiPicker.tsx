@@ -4,7 +4,7 @@ import shallow from "zustand/shallow";
 import Picker, { IEmojiData } from "emoji-picker-react";
 import { useStore } from "../store";
 
-type EmojiPickerProps = {
+export type EmojiPickerProps = {
   onEmojiClick: (e: IEmojiData) => void;
 };
 
@@ -32,7 +32,5 @@ const EmojiPicker = ({ onEmojiClick }: EmojiPickerProps) => {
     </Drawer>
   );
 };
-
-export { EmojiPickerProps };
 
 export default EmojiPicker;

@@ -1,12 +1,12 @@
 import Cookies from "js-cookie";
 
-const kutIsLoggedIn = Symbol("kutIsLoggedIn");
+const khwaishIsLoggedIn = Symbol("khwaishIsLoggedIn");
 
 function setIsLoggedInCookie() {
-  const domain = "khwaish";
+  const domain = "localhost";
 
-  if (kutIsLoggedIn.description)
-    Cookies.set(kutIsLoggedIn.description, true.toString(), {
+  if (khwaishIsLoggedIn.description)
+    Cookies.set(khwaishIsLoggedIn.description, true.toString(), {
       expires: 30,
       domain
     });
@@ -14,29 +14,40 @@ function setIsLoggedInCookie() {
 
 class Session {
   userId: string = "";
+  name: string = "";
+  phone: string = "";
+  about: string = "";
   accessToken: string = "";
   accessTokenExpiry: number = Date.now();
   refreshToken: string = "";
   refreshTokenExpiry: number = Date.now();
 
   async onCreateSession({
+    userId,
+    name,
+    phone,
+    about,
     accessToken,
-    accessTokenExpiry,
+    accessExpireAt,
     refreshToken,
-    refreshTokenExpiry
+    refreshExpireAt
   }: any) {
+    this.userId = userId;
+    this.name = name;
+    this.phone = phone;
+    this.about = about;
     this.accessToken = accessToken;
-    this.accessTokenExpiry = accessTokenExpiry;
+    this.accessTokenExpiry = new Date(accessExpireAt).getTime();
     this.refreshToken = refreshToken;
-    this.refreshTokenExpiry = refreshTokenExpiry;
+    this.refreshTokenExpiry = new Date(refreshExpireAt).getTime();
     setIsLoggedInCookie();
-    localStorage.setItem("khwaishRefreshTokenExpiry", refreshTokenExpiry);
-    localStorage.setItem("khwaishRefreshToken", refreshToken);
+    localStorage.setItem("khwaishRefreshTokenExpiry", this.refreshTokenExpiry.toString());
+    localStorage.setItem("khwaishRefreshToken", this.refreshToken);
   }
 
-  onRestoreSession({ accessToken, accessTokenExpiry }: any) {
+  onRestoreSession({ accessToken, accessExpireAt }: any) {
     this.accessToken = accessToken;
-    this.accessTokenExpiry = accessTokenExpiry;
+    this.accessTokenExpiry = new Date(accessExpireAt).getTime();
     setIsLoggedInCookie();
   }
 
@@ -45,13 +56,13 @@ class Session {
     this.accessTokenExpiry = Date.now();
     this.refreshToken = "";
     this.refreshTokenExpiry = Date.now();
-    if (kutIsLoggedIn.description) Cookies.remove(kutIsLoggedIn.description);
+    if (khwaishIsLoggedIn.description) Cookies.remove(khwaishIsLoggedIn.description);
     localStorage.removeItem("khwaishRefreshTokenExpiry");
     localStorage.removeItem("khwaishRefreshToken");
   }
 
   isLoggedIn() {
-    return kutIsLoggedIn.description && Cookies.get(kutIsLoggedIn.description);
+    return khwaishIsLoggedIn.description && Cookies.get(khwaishIsLoggedIn.description);
   }
 }
 

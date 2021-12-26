@@ -1,9 +1,61 @@
-const restoreSession = async () => {};
+import Session from "../utils/Session";
+import Client from "./_client";
 
-const createSession = async () => {};
+const restoreSession = async () => {
+  const result = await new Client({
+    path: "/auth/access"
+  }).get();
 
-const signOut = async () => {};
+  if (!(result.ok || result.code === 200)) {
+    throw new Error(result.message || 'Uh Oh! Unable to restore you session. Please sign in.');
+  } else {
+    Session.onRestoreSession(result);
+    return result;
+  }
+};
 
-const signIn = async () => {};
+const signOut = async () => {
+  Session.clearSession();
+};
 
-export { restoreSession, createSession, signOut, signIn };
+const signIn = async (data: SignInPayload) => {
+  const result = await new Client({
+    path: "/auth/login",
+    payload: data
+  }).post();
+
+  if (!(result.ok || result.code === 200)) {
+    throw new Error(result.message || 'Uh Oh! Unable to log you in.');
+  } else {
+    Session.onCreateSession({
+      userId: result._id,
+      name: result.name,
+      phone: result.phone,
+      about: result.about,
+      ...result.tokens,
+    });
+    return result;
+  }
+};
+
+const signup = async (data: SignupPayload) => {
+  const result = await new Client({
+    path: "/auth/signup",
+    payload: data
+  }).post();
+
+  if (!(result.ok || result.code === 200)) {
+    throw new Error(result.message || 'Uh Oh! Unable to sign you up.');
+  } else {
+    Session.onCreateSession({
+      userId: result._id,
+      name: result.name,
+      phone: result.phone,
+      about: result.about,
+      ...result.tokens,
+    });
+    return result;
+  }
+};
+
+export { restoreSession, signOut, signIn, signup };

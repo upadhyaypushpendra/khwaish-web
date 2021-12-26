@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
 import CssBaseline from "@mui/material/CssBaseline";
@@ -12,16 +12,40 @@ import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import Copyright from "../components/Copyright";
+import phone from "phone";
+import { signIn } from "../services/auth";
+import { useSnackbar } from "notistack";
+import { useLoadingOverlay } from "../components/LoadingOverlay";
 
 const SignIn = (props: any) => {
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  const snackbar = useSnackbar();
+  const loadingOvelay = useLoadingOverlay();
+  const navigate = useNavigate();
+
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    const data = new FormData(event.currentTarget);
-    // eslint-disable-next-line no-console
-    console.log({
-      email: data.get("email"),
-      password: data.get("password")
-    });
+    loadingOvelay.showLoadingOverlay("Signing you in...");
+    try {
+      const formData = new FormData(event.currentTarget);
+      const _phoneNumber = formData.get("phone")?.toString();
+      const password = formData.get("password")?.toString();
+
+      if (_phoneNumber) {
+        const { isValid, phoneNumber } = phone(_phoneNumber);
+        if (isValid && phoneNumber) {
+          await signIn({ phone: phoneNumber, password });
+          navigate("/home");
+        } else {
+          snackbar.enqueueSnackbar('Please enter a valid phone number', {
+            variant: "error",
+          })
+        }
+      }
+    } catch (error) {
+      snackbar.enqueueSnackbar(error?.message || "Unable to sign in! Please try again.", { variant: "error" });
+    } finally {
+      loadingOvelay.hideLoadingOverlay();
+    }
   };
 
   return (
@@ -61,7 +85,7 @@ const SignIn = (props: any) => {
             label="Password"
             type="password"
             id="password"
-            autoComplete="current-password"
+            autoComplete="password"
             placeholder="Your password here..."
           />
           <FormControlLabel

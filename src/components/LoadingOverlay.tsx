@@ -20,14 +20,14 @@ type LoadingOverlayContextType = {
 
 const LoadingOverlayContext = React.createContext({
   _loading: false,
-  _message: ""
+  _message: "",
+  _setLoading: (value: boolean) => { },
+  _setMessage: (value:  string) => { },
 });
 
 const LoadingOverlay = () => {
   const classes = useStyles();
-  const { _loading, _message } = React.useContext(
-    LoadingOverlayContext
-  ) as LoadingOverlayContextType;
+  const { _loading, _message } = React.useContext(LoadingOverlayContext);
 
   return (
     <Backdrop className={classes.backdrop} open={_loading}>
@@ -58,7 +58,7 @@ const LoadingOverlayProvider = ({ children }: any) => {
           _setLoading,
           _message,
           _setMessage
-        } as LoadingOverlayContextType
+        }
       }
     >
       <LoadingOverlay />
@@ -68,9 +68,7 @@ const LoadingOverlayProvider = ({ children }: any) => {
 };
 
 const useLoadingOverlay = () => {
-  const { _setLoading, _setMessage } = React.useContext(
-    LoadingOverlayContext
-  ) as LoadingOverlayContextType;
+  const { _setLoading, _setMessage } = React.useContext(LoadingOverlayContext);
 
   const showLoadingOverlay = (_message = "") => {
     _setMessage(_message);

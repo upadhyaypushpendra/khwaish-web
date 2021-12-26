@@ -1,28 +1,34 @@
 import React from "react";
-import { Route, Routes } from "react-router-dom";
+import { Route, Routes, useNavigate } from "react-router-dom";
 import { ThemeProvider } from "@mui/material/styles";
 import { Box, Button, createTheme, PaletteMode } from "@mui/material";
 import { Close } from "@mui/icons-material";
 import { SnackbarKey, SnackbarProvider } from "notistack";
 import { getThemeDesign } from "../theme";
 import ThemeSwitch from "../components/ThemeSwtich";
-import PrivateRoute from "../components/PrivateRoute";
 import { LoadingOverlayProvider } from "../components/LoadingOverlay";
 import App from "./App";
 import SignIn from "./SignIn";
 import ForgotPassword from "./ForgotPassword";
 import Signup from "./Signup";
 import SessionProvider from "../components/SessionProvider";
+import Session from "../utils/Session";
 
 const Screens = () => {
-  const [mode, setMode] = React.useState<PaletteMode>("light");
+  const navigate = useNavigate();
+  const [mode, setMode] = React.useState<PaletteMode>(
+    localStorage.getItem("theme") === "light" ? "light" : "dark"
+  );
+
   const colorMode = React.useMemo(
     () => ({
       // The dark mode switch would invoke this method
       toggleColorMode: () => {
-        setMode((prevMode: PaletteMode) =>
-          prevMode === "light" ? "dark" : "light"
-        );
+        setMode((prevMode: PaletteMode) => {
+          const newTheme = prevMode === "light" ? "dark" : "light";
+          localStorage.setItem("theme", newTheme);
+          return newTheme;
+        });
       }
     }),
     []
@@ -36,6 +42,12 @@ const Screens = () => {
   const onClickDismiss = (key: SnackbarKey) => () => {
     notistackRef?.current?.closeSnackbar(key);
   };
+
+  React.useEffect(() => {
+    if (!Session.isLoggedIn()) {
+      navigate("/signin");
+    }
+  }, []);
 
   return (
     <ThemeProvider theme={theme}>
@@ -65,10 +77,7 @@ const Screens = () => {
               />
             </Box>
             <Routes>
-              <Route
-                path="/"
-                element={<PrivateRoute path="/" element={<App />} />}
-              />
+              <Route path="/home" element={<App />}/>
               <Route path="/signup" element={<Signup />} />
               <Route path="/reset-password" element={<ForgotPassword />} />
               <Route path="/signin" element={<SignIn />} />
