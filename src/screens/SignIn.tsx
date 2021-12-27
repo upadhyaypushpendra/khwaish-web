@@ -45,9 +45,9 @@ const SignIn = (props: any) => {
         }
       }
     } catch (error) {
-      if(error instanceof Error)
+      if (error instanceof Error)
         snackbar.enqueueSnackbar(error?.message || "Unable to sign in! Please try again.", { variant: "error" });
-      
+
       if (error instanceof String)
         snackbar.enqueueSnackbar(error || "Unable to sign in! Please try again.", { variant: "error" });
     } finally {
@@ -66,8 +66,14 @@ const SignIn = (props: any) => {
           alignItems: "center"
         }}
       >
-        <Avatar sx={{ m: 1, bgcolor: "secondary.main" }}>
-          <LockOutlinedIcon />
+        <Avatar sx={{
+          marginBottom: 8,
+          borderRadius: 0,
+          bgcolor: "transparent",
+          width: "50%",
+          height: "50%"
+        }}>
+          <img alt="Khwaish" src={"/AppLogo.png"} width="50%" height="auto" />
         </Avatar>
         <Typography component="h1" variant="h5">
           Sign in
@@ -83,7 +89,7 @@ const SignIn = (props: any) => {
             autoComplete="phone"
             autoFocus
             placeholder="You phone here..."
-            // defaultValue="+919516468071"
+          // defaultValue="+919516468071"
           />
           <TextField
             margin="normal"
@@ -95,7 +101,7 @@ const SignIn = (props: any) => {
             id="password"
             autoComplete="password"
             placeholder="Your password here..."
-            // defaultValue="mypassword"
+          // defaultValue="mypassword"
           />
           <FormControlLabel
             name="rememberMe"
@@ -108,7 +114,7 @@ const SignIn = (props: any) => {
             variant="contained"
             sx={{ mt: 3, mb: 2 }}
           >
-            Sign In
+            Login
           </Button>
           <Grid container>
             <Grid item xs>

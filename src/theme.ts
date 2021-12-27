@@ -63,32 +63,18 @@ const getPalette = (mode: PaletteMode) => {
 };
 
 const getThemeDesign = (mode: PaletteMode) => ({
-  palette: getPalette(mode)
-  // palette: {
-  //   ...(mode === "light"
-  //     ? {
-  //         // palette values for light mode
-  //         primary: blue["A400"],
-  //         divider: blue[700],
-  //         text: {
-  //           primary: grey[900],
-  //           secondary: grey[800]
-  //         }
-  //       }
-  //     : {
-  //         // palette values for dark mode
-  //         primary: blue["A400"],
-  //         divider: blue[700],
-  //         background: {
-  //           default: grey[800],
-  //           paper: grey[800]
-  //         },
-  //         text: {
-  //           primary: "#fff",
-  //           secondary: grey[50]
-  //         }
-  //       })
-  // }
+  palette: getPalette(mode),
+  typography: {
+    fontFamily: [
+      'Leckerli One',
+      'cursive',
+      'Arial',
+      'sans-serif',
+      '"Apple Color Emoji"',
+      '"Segoe UI Emoji"',
+      '"Segoe UI Symbol"',
+    ].join(','),
+  },
 });
 
 export { getThemeDesign };
