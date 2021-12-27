@@ -2,12 +2,21 @@ import React from "react";
 import Backdrop from "@mui/material/Backdrop";
 import { DefaultTheme, makeStyles } from "@mui/styles";
 import Box from "@mui/material/Box";
-import LinearProgress from "@mui/material/LinearProgress";
 import Typography from "@mui/material/Typography";
+import LoadingGif from "../assets/loading.gif";
 
 const useStyles = makeStyles((theme: DefaultTheme) => ({
   backdrop: {
-    backgroundColor: "rgba(255, 255, 255, 0.8)"
+    backgroundColor: "rgba(255, 255, 255, 0.8)",
+    zIndex: 1000,
+  },
+  background: {
+    backgroundImage: `url(${LoadingGif})`,
+    backgroundAttachment: "fixed",
+    backgroundRepeat: "no-repeat",
+    backgroundPosition: "50% 50%",
+    backgroundSize: "cover",
+    opacity: 0.6,
   }
 }));
 
@@ -20,9 +29,9 @@ type LoadingOverlayContextType = {
 
 const LoadingOverlayContext = React.createContext({
   _loading: false,
-  _message: "",
+  _message: "Loading...",
   _setLoading: (value: boolean) => { },
-  _setMessage: (value:  string) => { },
+  _setMessage: (value: string) => { },
 });
 
 const LoadingOverlay = () => {
@@ -35,12 +44,16 @@ const LoadingOverlay = () => {
         display="flex"
         flexDirection="column"
         textAlign="center"
+        alignItems="center"
+        justifyContent="center"
         minWidth="200px"
+        width="100%"
+        height="100%"
+        className={classes.background}
       >
         <Typography variant="h5" style={{ marginBottom: 8 }}>
           {_message}
         </Typography>
-        <LinearProgress color="primary" />
       </Box>
     </Backdrop>
   );
@@ -48,7 +61,7 @@ const LoadingOverlay = () => {
 
 const LoadingOverlayProvider = ({ children }: any) => {
   const [_loading, _setLoading] = React.useState(false);
-  const [_message, _setMessage] = React.useState("");
+  const [_message, _setMessage] = React.useState("Loading...");
 
   return (
     <LoadingOverlayContext.Provider
@@ -70,13 +83,13 @@ const LoadingOverlayProvider = ({ children }: any) => {
 const useLoadingOverlay = () => {
   const { _setLoading, _setMessage } = React.useContext(LoadingOverlayContext);
 
-  const showLoadingOverlay = (_message = "") => {
+  const showLoadingOverlay = (_message = "Loading...") => {
     _setMessage(_message);
     _setLoading(true);
   };
 
   const hideLoadingOverlay = () => {
-    _setMessage("");
+    _setMessage("Loading...");
     _setLoading(false);
   };
 

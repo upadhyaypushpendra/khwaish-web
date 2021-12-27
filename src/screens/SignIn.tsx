@@ -83,7 +83,7 @@ const SignIn = (props: any) => {
             autoComplete="phone"
             autoFocus
             placeholder="You phone here..."
-            defaultValue="+919516468071"
+            // defaultValue="+919516468071"
           />
           <TextField
             margin="normal"
@@ -95,7 +95,7 @@ const SignIn = (props: any) => {
             id="password"
             autoComplete="password"
             placeholder="Your password here..."
-            defaultValue="mypassword"
+            // defaultValue="mypassword"
           />
           <FormControlLabel
             name="rememberMe"
