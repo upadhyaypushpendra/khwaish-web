@@ -3,7 +3,7 @@ import Cookies from "js-cookie";
 const khwaishIsLoggedIn = Symbol("khwaishIsLoggedIn");
 
 function setIsLoggedInCookie() {
-  const domain = "localhost";
+  const domain = process.env.REACT_APP_COOKIE_DOMAIN || "localhost";
 
   if (khwaishIsLoggedIn.description)
     Cookies.set(khwaishIsLoggedIn.description, true.toString(), {
