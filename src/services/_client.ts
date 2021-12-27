@@ -12,7 +12,7 @@ class Client {
 
   _options: Record<string, unknown>;
 
-  _baseUrl = process.env.REACT_APP_SERVER_URL || "http://localhost:9000";
+  _baseUrl = process.env.REACT_APP_SERVER_URL || "https://khwaish-apis.herokuapp.com";
 
   constructor({
     path = "",
