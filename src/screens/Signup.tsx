@@ -43,7 +43,7 @@ const Signup = () => {
 
         if (isValid && phoneNumber) {
           await signup({ phone: phoneNumber, password, name, about });
-          navigate("/home");
+          navigate("/");
         } else {
           snackbar.enqueueSnackbar('Please enter a valid phone number', {
             variant: "error",
@@ -51,7 +51,12 @@ const Signup = () => {
         }
       }
     } catch (error) {
-      snackbar.enqueueSnackbar(error?.message || "Unable to sign up! Please try again.", { variant: "error" });
+      if (error instanceof Error)
+        snackbar.enqueueSnackbar(error?.message || "Unable to sign up! Please try again.", { variant: "error" });
+
+      if (error instanceof String)
+        snackbar.enqueueSnackbar(error || "Unable to sign up! Please try again.", { variant: "error" });
+      
     } finally {
       loadingOvelay.hideLoadingOverlay();
     }

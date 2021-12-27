@@ -21,6 +21,5 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "noEmit": true,
-    "useUnknownInCatchVariables": false,
   }
 }

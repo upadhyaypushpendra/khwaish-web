@@ -16,6 +16,7 @@ import phone from "phone";
 import { signIn } from "../services/auth";
 import { useSnackbar } from "notistack";
 import { useLoadingOverlay } from "../components/LoadingOverlay";
+import Session from "../utils/Session";
 
 const SignIn = (props: any) => {
   const snackbar = useSnackbar();
@@ -34,7 +35,9 @@ const SignIn = (props: any) => {
         const { isValid, phoneNumber } = phone(_phoneNumber);
         if (isValid && phoneNumber) {
           await signIn({ phone: phoneNumber, password });
-          navigate("/home");
+          if (Boolean(formData.get("rememberMe"))) Session.rememberMe({ phone: phoneNumber, password });
+          else Session.unRememberMe();
+          navigate("/");
         } else {
           snackbar.enqueueSnackbar('Please enter a valid phone number', {
             variant: "error",
@@ -42,7 +45,11 @@ const SignIn = (props: any) => {
         }
       }
     } catch (error) {
-      snackbar.enqueueSnackbar(error?.message || "Unable to sign in! Please try again.", { variant: "error" });
+      if(error instanceof Error)
+        snackbar.enqueueSnackbar(error?.message || "Unable to sign in! Please try again.", { variant: "error" });
+      
+      if (error instanceof String)
+        snackbar.enqueueSnackbar(error || "Unable to sign in! Please try again.", { variant: "error" });
     } finally {
       loadingOvelay.hideLoadingOverlay();
     }
@@ -76,6 +83,7 @@ const SignIn = (props: any) => {
             autoComplete="phone"
             autoFocus
             placeholder="You phone here..."
+            defaultValue="+919516468071"
           />
           <TextField
             margin="normal"
@@ -87,9 +95,11 @@ const SignIn = (props: any) => {
             id="password"
             autoComplete="password"
             placeholder="Your password here..."
+            defaultValue="mypassword"
           />
           <FormControlLabel
-            control={<Checkbox value="remember" color="primary" />}
+            name="rememberMe"
+            control={<Checkbox defaultValue={"true"} value={true} color="primary" />}
             label="Remember me"
           />
           <Button

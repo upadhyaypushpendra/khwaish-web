@@ -5,7 +5,7 @@ import { useSnackbar } from "notistack";
 import { useStore } from "../store";
 
 import LoadingOverlay, { useLoadingOverlay } from "./LoadingOverlay";
-import { restoreSession, signOut } from "../services/auth";
+import { restoreSession, signIn, signOut } from "../services/auth";
 import Session from "../utils/Session";
 import { subMinutes } from "../utils";
 
@@ -21,8 +21,9 @@ function SessionProvider({ children }: any) {
   const isTokenExpiring = () =>
     subMinutes(new Date(Session.accessTokenExpiry), 5) <= new Date();
 
-  const isRefreshTokenExpiring = () =>
-    subMinutes(new Date(Session.refreshTokenExpiry), 5) <= new Date();
+  const isRefreshTokenExpiring = () => {
+    return subMinutes(new Date(Session.refreshTokenExpiry), 5) <= new Date();
+  }
 
   const goToSignIn = async () => {
     await signOut();
@@ -30,18 +31,40 @@ function SessionProvider({ children }: any) {
     navigate("/signIn");
   };
 
+  const checkRemembered = async () => {
+    try {
+      const isRemeberedResult = Session.isRemembered();
+      if (isRemeberedResult !== false) {
+        await signIn(isRemeberedResult);
+        return true;
+      }
+    } catch (error) {
+      console.log('DEBUG::checkRemembered: failed', error);
+      return false;
+    }
+  };
+
   async function onLoad() {
     loadingOverlay.showLoadingOverlay("Setting up Kwaish for you...");
 
     try {
+      // Check for remember me
+      const result = await checkRemembered();
+
+      if (result) {
+        navigate("/");
+        return;
+      };
+
       // if the refresh token is expiring then sign out and redirect to sign in
       const khwaishRefreshTokenExpiry = localStorage.getItem(
         "khwaishRefreshTokenExpiry"
       );
 
       if (khwaishRefreshTokenExpiry) {
+        const refreshTokenExpiryTime = new Date(parseInt(khwaishRefreshTokenExpiry, 10)).getTime();
         Session.refreshTokenExpiry =
-          new Date(khwaishRefreshTokenExpiry).getTime() || new Date().getTime();
+          refreshTokenExpiryTime <= new Date().getTime() ? new Date().getTime() : refreshTokenExpiryTime;
       }
 
       if (isRefreshTokenExpiring()) {
@@ -50,26 +73,17 @@ function SessionProvider({ children }: any) {
 
       if (Session.isLoggedIn()) {
         if (isTokenExpiring()) Session.accessToken = "";
-        await restoreSession()
-          .then((result) => {
-            snackbar.enqueueSnackbar("Signed-in to Khwaish", {
-              variant: "success"
-            });
-            navigate("/home");
-          })
-          .catch((err) => {
-            snackbar.enqueueSnackbar("Uh Oh! You need to sign.", {
-              variant: "warning",
-              onExited: (e) => navigate("/signin")
-            });
-            reset();
-            navigate("/signin");
-          })
-          .finally(() => {
-            loadingOverlay.hideLoadingOverlay();
-          });
+
+        await restoreSession();
+
+        navigate("/");
+
+        loadingOverlay.hideLoadingOverlay();
+      } else {
+
       }
     } catch (e) {
+      console.log('DEBUG::onLoad error: ', e);
       snackbar.enqueueSnackbar("Uh Oh! You need to sign.", {
         variant: "warning",
         onExited: goToSignIn

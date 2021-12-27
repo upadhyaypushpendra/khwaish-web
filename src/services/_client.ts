@@ -38,7 +38,7 @@ class Client {
         userId: Session.userId,
         "kutuki-application": "web",
         "khwaish-access-token": Session.accessToken,
-        "khwaish-refresh-token": localStorage.getItem("kutRefreshToken")
+        "khwaish-refresh-token": localStorage.getItem("khwaishRefreshToken"),
       }
     };
 

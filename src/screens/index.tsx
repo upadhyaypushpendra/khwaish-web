@@ -77,10 +77,10 @@ const Screens = () => {
               />
             </Box>
             <Routes>
-              <Route path="/home" element={<App />}/>
               <Route path="/signup" element={<Signup />} />
               <Route path="/reset-password" element={<ForgotPassword />} />
               <Route path="/signin" element={<SignIn />} />
+              <Route path="/" element={<App />} />
             </Routes>
           </SessionProvider>
         </SnackbarProvider>

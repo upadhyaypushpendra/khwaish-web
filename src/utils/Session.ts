@@ -1,6 +1,8 @@
 import Cookies from "js-cookie";
+import { encrypt, decrypt } from "./cryptoJS";
 
 const khwaishIsLoggedIn = Symbol("khwaishIsLoggedIn");
+const khwaishIsCredentials = Symbol("khwaishIsCredentials");
 
 function setIsLoggedInCookie() {
   const domain = process.env.REACT_APP_COOKIE_DOMAIN || "localhost";
@@ -22,7 +24,7 @@ class Session {
   refreshToken: string = "";
   refreshTokenExpiry: number = Date.now();
 
-  async onCreateSession({
+  onCreateSession({
     userId,
     name,
     phone,
@@ -31,7 +33,7 @@ class Session {
     accessExpireAt,
     refreshToken,
     refreshExpireAt
-  }: any) {
+  }: any): void {
     this.userId = userId;
     this.name = name;
     this.phone = phone;
@@ -45,13 +47,13 @@ class Session {
     localStorage.setItem("khwaishRefreshToken", this.refreshToken);
   }
 
-  onRestoreSession({ accessToken, accessExpireAt }: any) {
+  onRestoreSession({ accessToken, accessExpireAt }: any): void {
     this.accessToken = accessToken;
     this.accessTokenExpiry = new Date(accessExpireAt).getTime();
     setIsLoggedInCookie();
   }
 
-  clearSession() {
+  clearSession(): void {
     this.accessToken = "";
     this.accessTokenExpiry = Date.now();
     this.refreshToken = "";
@@ -59,10 +61,28 @@ class Session {
     if (khwaishIsLoggedIn.description) Cookies.remove(khwaishIsLoggedIn.description);
     localStorage.removeItem("khwaishRefreshTokenExpiry");
     localStorage.removeItem("khwaishRefreshToken");
+    this.unRememberMe();
   }
 
-  isLoggedIn() {
-    return khwaishIsLoggedIn.description && Cookies.get(khwaishIsLoggedIn.description);
+  isLoggedIn(): boolean {
+    return Boolean(khwaishIsLoggedIn.description && Cookies.get(khwaishIsLoggedIn.description));
+  }
+
+  isRemembered(): false | SignInPayload {
+    if (khwaishIsCredentials.description) {
+      const credentialsRemembered = localStorage.getItem(khwaishIsCredentials.description);
+      return Boolean(credentialsRemembered) ? decrypt(credentialsRemembered as string) : false;
+    } else return false;
+  }
+
+  rememberMe({ phone, password }: SignInPayload): void {
+    if (khwaishIsCredentials.description)
+      localStorage.setItem(khwaishIsCredentials.description, encrypt({ phone, password }));
+  }
+
+  unRememberMe(): void {
+    if (khwaishIsCredentials.description)
+      localStorage.removeItem(khwaishIsCredentials.description);
   }
 }
 
