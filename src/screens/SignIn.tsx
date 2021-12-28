@@ -121,7 +121,7 @@ const SignIn = (props: any) => {
               <Link to="/reset-password">Reset password?</Link>
             </Grid>
             <Grid item>
-              <Link to="signup">Don't have an account? Sign Up</Link>
+              <Link to="/signup">Don't have an account? Sign Up</Link>
             </Grid>
           </Grid>
         </Box>
