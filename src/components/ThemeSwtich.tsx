@@ -1,7 +1,10 @@
+import React from "react";
 import { styled } from "@mui/material/styles";
 import Switch from "@mui/material/Switch";
+import { useStore } from "../store";
+import shallow from "zustand/shallow";
 
-const ThemeSwitch = styled(Switch)(({ theme }) => ({
+const StyledSwitch = styled(Switch)(({ theme }) => ({
   width: 62,
   height: 34,
   padding: 7,
@@ -48,4 +51,27 @@ const ThemeSwitch = styled(Switch)(({ theme }) => ({
   }
 }));
 
+const ThemeSwitch = (props: any) => {
+  const [theme, setTheme] = useStore((state) => [state.theme, state.setTheme], shallow);
+
+  const colorMode = React.useMemo(
+    () => ({
+      // The dark mode switch would invoke this method
+      toggleColorMode: () => {
+        const newTheme = theme === "light" ? "dark" : "light";
+        localStorage.setItem("theme", newTheme);
+        setTheme(newTheme);
+      }
+    }),
+    []
+  );
+
+  return (
+    <StyledSwitch
+      sx={{ m: 1 }}
+      checked={theme === "dark"}
+      onChange={colorMode.toggleColorMode}
+    />
+  )
+};
 export default ThemeSwitch;

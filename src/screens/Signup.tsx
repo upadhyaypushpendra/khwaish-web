@@ -34,7 +34,7 @@ const Signup = () => {
       if (_phoneNumber && password) {
         const { isValid, phoneNumber } = phone(_phoneNumber);
 
-        if (validatePassword(password)) {
+        if (!validatePassword(password)) {
           snackbar.enqueueSnackbar('Please enter a valid password', {
             variant: "error",
           });

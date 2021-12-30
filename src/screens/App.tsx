@@ -2,14 +2,16 @@ import * as React from "react";
 import CssBaseline from "@mui/material/CssBaseline";
 import Container from "@mui/material/Container";
 import { useLoadingOverlay } from "../components/LoadingOverlay";
-import { Avatar } from "@mui/material";
+import Avatar from "@mui/material/Avatar";
+import ResponsiveAppBar from "../components/AppBar";
 
 const App = (props: any) => {
   const loadingOverlay = useLoadingOverlay();
   
   return (
-    <Container component="main" maxWidth="xs">
+    <Container component="main" style={{margin: 0, padding: 0, maxWidth: '100%'}}>
       <CssBaseline />
+      <ResponsiveAppBar />
       <Avatar sx={{
         marginBottom: 8,
         borderRadius: 0,

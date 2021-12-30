@@ -3,8 +3,9 @@ const subMinutes = function (dt: Date, minutes: number) {
 };
 
 const validatePassword = (password: string) => {
-  let regex = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/
-  return regex.test(password);
+  return true;
+  // let regex = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/
+  // return regex.test(password);
 };
 
 export { subMinutes, validatePassword };

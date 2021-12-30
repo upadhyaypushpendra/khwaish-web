@@ -17,6 +17,7 @@ import { signIn } from "../services/auth";
 import { useSnackbar } from "notistack";
 import { useLoadingOverlay } from "../components/LoadingOverlay";
 import Session from "../utils/Session";
+import AppLogo from "../components/AppLogo";
 
 const SignIn = (props: any) => {
   const snackbar = useSnackbar();
@@ -63,18 +64,10 @@ const SignIn = (props: any) => {
           marginTop: 8,
           display: "flex",
           flexDirection: "column",
-          alignItems: "center"
+          alignItems: "center",
         }}
       >
-        <Avatar sx={{
-          marginBottom: 8,
-          borderRadius: 0,
-          bgcolor: "transparent",
-          width: "50%",
-          height: "50%"
-        }}>
-          <img alt="Khwaish" src={"/AppLogo.png"} width="50%" height="auto" />
-        </Avatar>
+        <AppLogo size={100} margin={24} />
         <Typography component="h1" variant="h5">
           Sign in
         </Typography>

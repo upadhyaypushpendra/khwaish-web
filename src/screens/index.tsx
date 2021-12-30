@@ -1,7 +1,7 @@
 import React from "react";
 import { Route, Routes, useNavigate } from "react-router-dom";
 import { ThemeProvider } from "@mui/material/styles";
-import { Box, Button, createTheme, PaletteMode } from "@mui/material";
+import { Button, createTheme, PaletteMode } from "@mui/material";
 import { Close } from "@mui/icons-material";
 import { SnackbarKey, SnackbarProvider } from "notistack";
 import { getThemeDesign } from "../theme";
@@ -13,29 +13,15 @@ import ForgotPassword from "./ForgotPassword";
 import Signup from "./Signup";
 import SessionProvider from "../components/SessionProvider";
 import Session from "../utils/Session";
+import { useStore } from "../store";
+import shallow from "zustand/shallow";
 
 const Screens = () => {
   const navigate = useNavigate();
-  const [mode, setMode] = React.useState<PaletteMode>(
-    localStorage.getItem("theme") === "light" ? "light" : "dark"
-  );
+  const [theme] = useStore((state) => [state.theme], shallow);
 
-  const colorMode = React.useMemo(
-    () => ({
-      // The dark mode switch would invoke this method
-      toggleColorMode: () => {
-        setMode((prevMode: PaletteMode) => {
-          const newTheme = prevMode === "light" ? "dark" : "light";
-          localStorage.setItem("theme", newTheme);
-          return newTheme;
-        });
-      }
-    }),
-    []
-  );
-
-  // Update the theme only if the mode changes
-  const theme = React.useMemo(() => createTheme(getThemeDesign(mode)), [mode]);
+  // Update the theme only if the theme changes
+  const muiTheme = React.useMemo(() => createTheme(getThemeDesign(theme)), [theme]);
 
   const notistackRef: React.RefObject<SnackbarProvider> = React.createRef();
 
@@ -50,7 +36,7 @@ const Screens = () => {
   }, []);
 
   return (
-    <ThemeProvider theme={theme}>
+    <ThemeProvider theme={muiTheme}>
       <LoadingOverlayProvider>
         <SnackbarProvider
           ref={notistackRef}
@@ -63,19 +49,6 @@ const Screens = () => {
           maxSnack={3}
         >
           <SessionProvider>
-            <Box
-              sx={{
-                position: "fixed",
-                right: 0,
-                top: 0
-              }}
-            >
-              <ThemeSwitch
-                sx={{ m: 1 }}
-                checked={mode === "dark"}
-                onChange={colorMode.toggleColorMode}
-              />
-            </Box>
             <Routes>
               <Route path="/signup" element={<Signup />} />
               <Route path="/reset-password" element={<ForgotPassword />} />
