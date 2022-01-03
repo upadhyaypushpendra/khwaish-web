@@ -85,10 +85,10 @@ const Signup = () => {
                 <Typography component="h1" variant="h6">
                     Lets get some details for Khwaish
                 </Typography>
-                <Box component="form" onSubmit={handleSubmit} sx={{ mt: 1 }}>
+                <Box component="form" onSubmit={handleSubmit} sx={{ mt: 1 }} noValidate>
                     <HtmlTooltip title="Phone number with country code i.e. +91xxxxxxxxxx">
                         <TextField
-                            variant="filled"
+                            variant="standard"
                             margin="normal"
                             required
                             fullWidth
@@ -118,7 +118,7 @@ const Signup = () => {
                         }
                     >
                         <TextField
-                            variant="filled"
+                            variant="standard"
                             margin="normal"
                             required
                             fullWidth
@@ -132,7 +132,7 @@ const Signup = () => {
                         />
                     </HtmlTooltip>
                     <TextField
-                        variant="filled"
+                        variant="standard"
                         margin="normal"
                         fullWidth
                         id="name"
@@ -142,7 +142,7 @@ const Signup = () => {
                         placeholder="Get set your name?"
                     />
                     <TextField
-                        variant="filled"
+                        variant="standard"
                         margin="normal"
                         fullWidth
                         id="about"
@@ -171,7 +171,7 @@ const Signup = () => {
                     </Box>
                     <Grid container>
                         <Grid item xs>
-                            <Link to="/">Already have an account? Sign In</Link>
+                            <Link to="/signin">Already have an account? Sign In</Link>
                         </Grid>
                     </Grid>
                 </Box>
