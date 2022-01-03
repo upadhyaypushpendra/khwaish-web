@@ -72,6 +72,7 @@ const SignIn = (props: any) => {
                 </Typography>
                 <Box component="form" onSubmit={handleSubmit} sx={{ mt: 1 }} noValidate>
                     <TextField
+                        variant="outlined"
                         margin="normal"
                         required
                         fullWidth
@@ -84,6 +85,7 @@ const SignIn = (props: any) => {
                         defaultValue="+91"
                     />
                     <TextField
+                        variant="outlined"
                         margin="normal"
                         required
                         fullWidth
