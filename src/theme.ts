@@ -66,12 +66,12 @@ const getThemeDesign = (mode: PaletteMode) => ({
     palette: getPalette(mode),
     typography: {
         fontFamily: [
-            'Source Sans Pro',
+            'Source Sans Pro Bold',
             'sans-serif',
             'Arial',
-            '"Apple Color Emoji"',
-            '"Segoe UI Emoji"',
-            '"Segoe UI Symbol"',
+            'Apple Color Emoji',
+            'Segoe UI Emoji',
+            'Segoe UI Symbol',
         ].join(','),
     },
 });

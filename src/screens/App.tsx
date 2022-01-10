@@ -1,29 +1,25 @@
-import * as React from "react";
 import CssBaseline from "@mui/material/CssBaseline";
 import Container from "@mui/material/Container";
-import { useLoadingOverlay } from "../components/LoadingOverlay";
-import Avatar from "@mui/material/Avatar";
-import ResponsiveAppBar from "../components/AppBar";
+import AppBar from "../components/AppBar";
+import Notifications from "../components/Notifications";
+import shallow from "zustand/shallow";
+import { useStore } from "../store";
+import { AppTab } from "../types";
+import FindFriends from "../components/FindFriends";
 
-const App = (props: any) => {
-  const loadingOverlay = useLoadingOverlay();
-  
-  return (
-    <Container component="main" style={{margin: 0, padding: 0, maxWidth: '100%'}}>
-      <CssBaseline />
-      <ResponsiveAppBar />
-      <Avatar sx={{
-        marginBottom: 8,
-        borderRadius: 0,
-        bgcolor: "transparent",
-        width: "50%",
-        height: "50%"
-      }}>
-        <img alt="Khwaish" src={"/AppLogo.png"} width="50%" height="auto" />
-      </Avatar>
-      <h1>Kwaish App</h1>
-    </Container>
-  );
+const App = () => {
+    const [tab] = useStore((state) => [state.tab], shallow);
+
+    return (
+        <Container component="main" style={{ margin: 0, padding: 0, maxWidth: '100%' }}>
+            <CssBaseline />
+            <AppBar />
+            {tab === AppTab.chats && <h1>Home</h1>}
+            {tab === AppTab.requests && <Notifications />}
+            {tab === AppTab.profile && <h1>Profile</h1>}
+            {tab === AppTab.find && <FindFriends />}
+        </Container>
+    );
 };
 
 export default App;

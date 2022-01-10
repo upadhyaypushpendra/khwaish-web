@@ -6,8 +6,8 @@ type SignInPayload = {
 }
 
 type SignupPayload = {
-  phone: string | null | undefined;
-  name: string | null | undefined;
-  about: string | null | undefined;
-  password: string | null | undefined;
+    phone: string | null | undefined;
+    name: string | null | undefined;
+    about: string | null | undefined;
+    password: string | null | undefined;
 }
