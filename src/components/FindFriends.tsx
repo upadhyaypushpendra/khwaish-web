@@ -12,6 +12,7 @@ import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import Divider from '@mui/material/Divider';
+import { getUsers } from "../services/users";
 
 
 const ListWrapper = styled('div')(({ theme }) => ({
@@ -56,9 +57,31 @@ const defaultList = [{ id: "1", name: "Raju", about: null }, { id: "2", name: "G
 
 export default function FindFriends(props: any) {
     const [result, setResult] = React.useState(defaultList);
+    const [input, setInput] = React.useState("");
 
     const sendRequest = (id: string) => {
         console.log('DEBUG::sendRequest ', id);
+    };
+
+    const handleInputChange = async (e: any) => {
+        console.log('DEBUG::handleInputChange ', e.target.value);
+
+        setInput(e.target.value);
+
+        const input = e.target.value?.trim();
+
+        if (Boolean(input)) {
+            try {
+                const { users } = await getUsers(input);
+                setResult(users);
+            } catch (error) {
+                console.log('DEBUG::handleInputChange -> Error', error);
+                setResult([]);
+            }
+
+        } else {
+            setResult([]);
+        }
     };
 
     return (
@@ -67,6 +90,7 @@ export default function FindFriends(props: any) {
                 <StyledInputBase
                     placeholder="Search with your friend's name or phone..."
                     inputProps={{ 'aria-label': 'search google maps' }}
+                    onChange={handleInputChange}
                 />
                 <IconButton type="submit" sx={{ p: '10px', flexGrow: 0 }} aria-label="search">
                     <SearchIcon />
@@ -104,11 +128,11 @@ export default function FindFriends(props: any) {
                             </React.Fragment>
                         ))) : (
                             <ListItem alignItems="center">
-                                <ListItemText sx={{ textAlign: 'center'}}>
+                                <ListItemText sx={{ textAlign: 'center' }}>
                                     Not found anything!! Try with some other phone or name
                                 </ListItemText>
                             </ListItem>
-                    )
+                        )
                     }
                 </List >
             </ListWrapper>
