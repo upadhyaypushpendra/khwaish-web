@@ -1,6 +1,7 @@
 import Typography from '@mui/material/Typography';
 import { Box } from '@mui/material/node_modules/@mui/system';
 import { makeStyles } from '@mui/styles';
+import ThemeSwitch from './ThemeSwtich';
 
 const useStyles = makeStyles({
     paper: {
@@ -34,6 +35,7 @@ export default function Settings() {
             </Box>
             <Box className={classes.paper}>
                 <Typography variant='h5'>Theme</Typography>
+                <ThemeSwitch />
             </Box>
         </Box>
     );

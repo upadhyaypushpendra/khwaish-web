@@ -11,13 +11,13 @@ import Box from '@mui/material/Box';
 import Divider from '@mui/material/Divider';
 
 const Demo = styled('div')(({ theme }) => ({
-    backgroundColor: theme.palette.background.paper,
+    backgroundColor: theme.palette.background.default,
 }));
 
-const defaultList = [{ id: "1", name: "Raju", about: null }, { id: "2", name: "Golu", about: "About goluuu" }];
+// const defaultList = [{ id: "1", name: "Raju", about: null }, { id: "2", name: "Golu", about: "About goluuu" }];
 
 export default function ReceivedRequests() {
-    const [receivedRequests, setReceivedRequests] = React.useState(defaultList);
+    const [receivedRequests, setReceivedRequests] = React.useState([]);
 
     const handleAccept = (id: string) => {
         console.log('DEBUG::handleAccept ', id);
@@ -30,7 +30,7 @@ export default function ReceivedRequests() {
     return (
         <Demo>
             <List>
-                {receivedRequests?.map(({ id, name, about }) => (
+                {receivedRequests.length ? receivedRequests?.map(({ id, name, about }) => (
                     <React.Fragment key={id}>
                         <ListItem
                             key={id}
@@ -65,8 +65,13 @@ export default function ReceivedRequests() {
                         </ListItem>
                         <Divider variant="fullWidth" component="li" />
                     </React.Fragment>
-                ))
-                }
+                )) : (
+                    <ListItem alignItems="center">
+                        <ListItemText sx={{ textAlign: 'center' }}>
+                            Not requests!!
+                        </ListItemText>
+                    </ListItem>
+                )}
             </List >
         </Demo >
     );

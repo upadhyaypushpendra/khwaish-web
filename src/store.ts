@@ -1,4 +1,4 @@
-import { PaletteMode, Tab } from "@mui/material";
+import { PaletteMode } from "@mui/material";
 import create, { SetState, GetState } from "zustand";
 import { AppTab } from "./types";
 

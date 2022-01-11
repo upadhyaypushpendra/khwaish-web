@@ -124,7 +124,7 @@ export default function AppBar() {
 
     return (
         <Box sx={{ flexGrow: 1 }}>
-            <MUIAppBar position="static">
+            <MUIAppBar position="static" sx={{ backgroundColor: '#7b1fa2'}}>
                 <Toolbar>
                     <AppLogo />
                     <Typography

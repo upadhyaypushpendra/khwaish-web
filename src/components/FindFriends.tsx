@@ -1,6 +1,7 @@
 import React from "react";
 import { styled, alpha } from '@mui/material/styles';
 import Box from '@mui/material/Box';
+import Paper from '@mui/material/Paper';
 import IconButton from '@mui/material/IconButton';
 import InputBase from '@mui/material/InputBase';
 import SearchIcon from '@mui/icons-material/Search';
@@ -13,20 +14,19 @@ import Button from '@mui/material/Button';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import Divider from '@mui/material/Divider';
 import { getUsers } from "../services/users";
+import { useSnackbar } from "notistack";
+import { sendRequest } from "../services/requests";
 
 
 const ListWrapper = styled('div')(({ theme }) => ({
-    backgroundColor: theme.palette.background.paper,
+    backgroundColor: theme.palette.background.default,
+
 }));
 
 const Search = styled('div')(({ theme }) => ({
     position: 'relative',
     display: 'flex',
     borderRadius: theme.shape.borderRadius,
-    backgroundColor: alpha(theme.palette.common.white, 0.15),
-    '&:hover': {
-        backgroundColor: alpha(theme.palette.common.white, 0.25),
-    },
     marginTop: theme.spacing(0),
     marginRight: 0,
     marginLeft: 0,
@@ -53,14 +53,29 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
     },
 }));
 
-const defaultList = [{ id: "1", name: "Raju", about: null }, { id: "2", name: "Golu", about: "About goluuu" }];
+// const defaultList = [{ id: "1", name: "Raju", about: null }, { id: "2", name: "Golu", about: "About goluuu" }];
+
+const TIMEOUT = 500; //milliseconds
 
 export default function FindFriends(props: any) {
-    const [result, setResult] = React.useState(defaultList);
+    const snackbar = useSnackbar();
+    const [result, setResult] = React.useState([]);
     const [input, setInput] = React.useState("");
+    const fetchUsersTimeout = React.useRef<NodeJS.Timeout | null>(null);
 
-    const sendRequest = (id: string) => {
-        console.log('DEBUG::sendRequest ', id);
+    const handleSendRequest = async (id: string) => {
+        console.log('DEBUG::handleSendRequest ', id);
+        try {
+            await sendRequest(id);
+            snackbar.enqueueSnackbar("Request Sent!!", {
+                variant: "success",
+            });
+        } catch (error) {
+            console.log('DEBUG::handleInputChange -> Error', error);
+            snackbar.enqueueSnackbar("Sorry unable to Send Request", {
+                variant: "error",
+            });
+        }
     };
 
     const handleInputChange = async (e: any) => {
@@ -70,32 +85,38 @@ export default function FindFriends(props: any) {
 
         const input = e.target.value?.trim();
 
-        if (Boolean(input)) {
-            try {
-                const { users } = await getUsers(input);
-                setResult(users);
-            } catch (error) {
-                console.log('DEBUG::handleInputChange -> Error', error);
+        if (fetchUsersTimeout.current) clearTimeout(fetchUsersTimeout.current);
+
+        fetchUsersTimeout.current = setTimeout(async () => {
+            if (Boolean(input)) {
+                try {
+                    const { users } = await getUsers(input);
+                    setResult(users);
+                } catch (error) {
+                    console.log('DEBUG::handleInputChange -> Error', error);
+                    setResult([]);
+                }
+            } else {
                 setResult([]);
             }
-
-        } else {
-            setResult([]);
-        }
+        }, TIMEOUT);
     };
 
     return (
         <React.Fragment>
-            <Search>
-                <StyledInputBase
-                    placeholder="Search with your friend's name or phone..."
-                    inputProps={{ 'aria-label': 'search google maps' }}
-                    onChange={handleInputChange}
-                />
-                <IconButton type="submit" sx={{ p: '10px', flexGrow: 0 }} aria-label="search">
-                    <SearchIcon />
-                </IconButton>
-            </Search>
+            <Paper elevation={1} sx={{ m: 1 }}>
+                <Search>
+                    <StyledInputBase
+                        value={input}
+                        placeholder="Search with your friend's name or phone..."
+                        inputProps={{ 'aria-label': 'search google maps' }}
+                        onChange={handleInputChange}
+                    />
+                    <IconButton type="submit" sx={{ p: '10px', flexGrow: 0 }} aria-label="search">
+                        <SearchIcon />
+                    </IconButton>
+                </Search>
+            </Paper>
             <ListWrapper>
                 <List>
                     {result.length ?
@@ -109,7 +130,7 @@ export default function FindFriends(props: any) {
                                                 color="primary"
                                                 variant="contained"
                                                 sx={{ margin: "0 8px" }}
-                                                onClick={() => sendRequest(id)}
+                                                onClick={() => handleSendRequest(id)}
                                             >
                                                 Send Request
                                             </Button>

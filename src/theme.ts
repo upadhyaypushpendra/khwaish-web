@@ -1,74 +1,38 @@
 import { grey, blue, lightBlue, red, deepOrange } from "@mui/material/colors";
 import { PaletteMode } from "@mui/material";
 
-const getPalette = (mode: PaletteMode) => {
-    /* const palette = {
+const getPalette = (mode: PaletteMode = "light") => {
+    const palette = {
         mode,
         primary: {
-            light: lightBlue["A400"],
-            main: blue["A400"],
-            dark: blue["A400"],
-            contrastText: "#ffffff"
+            dark: '#8e24aa',
+            main: '#7b1fa2',
         },
         secondary: {
-            light: blue[100],
-            main: blue[400],
-            dark: blue[400],
-            contrastText: "#ffffff"
-        },
-        error: {
-            light: red[500],
-            main: red[700],
-            dark: red[800],
-            contrastText: grey[50]
-        },
-        warning: {
-            light: deepOrange[400],
-            main: deepOrange[600],
-            dark: deepOrange[700],
-            contrastText: grey["A100"]
-        },
-        info: {
-            light: lightBlue["A400"],
-            main: blue["A400"],
-            dark: blue["A400"],
-            contrastText: "#ffffff"
-        },
-        success: {
-            light: lightBlue["A400"],
-            main: blue["A400"],
-            dark: blue["A400"],
-            contrastText: "#ffffff"
-        },
-        contrastThreshold: 3
+            light: "#bdbdbd",
+            main: "#9e9e9e",
+            dark: "#e0e0e0",
+        }
     };
 
-    if (mode === "light") {
+    if (mode === "light" as PaletteMode) {
         return {
             ...palette,
             background: {
-                default: grey[50],
+                default: grey[200],
                 paper: grey[100]
             }
         };
-    } else if (mode === "dark") {
+    } else if (mode === "dark" as PaletteMode) {
         return {
             ...palette,
             background: {
-                default: grey[800],
+                default: grey[900],
                 paper: grey[800]
             }
         };
-    } */
-    return {
-        type: mode,
-        primary: {
-            main: '#4a148c',
-        },
-        secondary: {
-            main: '#f50057',
-        },
-    };
+    }
+    return palette;
 };
 
 const getThemeDesign = (mode: PaletteMode) => ({

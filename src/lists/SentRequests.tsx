@@ -14,10 +14,10 @@ const Demo = styled('div')(({ theme }) => ({
     backgroundColor: theme.palette.background.paper,
 }));
 
-const defaultList = [{ id: "1", name: "Raju", about: null }, { id: "2", name: "Golu", about: "About me" }];
+// const defaultList = [{ id: "1", name: "Raju", about: null }, { id: "2", name: "Golu", about: "About me" }];
 
 export default function SentRequests() {
-    const [sentRequests, setSentRequests] = React.useState(defaultList);
+    const [sentRequests, setSentRequests] = React.useState([]);
 
     const handleDelete = (id: string) => {
         console.log('DEBUG::handleDecline ', id);
@@ -26,7 +26,7 @@ export default function SentRequests() {
     return (
         <Demo>
             <List>
-                {sentRequests?.map(({ id, name, about }) => (
+                {sentRequests.length ? sentRequests?.map(({ id, name, about }) => (
                     <React.Fragment key={id}>
                         <ListItem
                             key={id}
@@ -56,7 +56,13 @@ export default function SentRequests() {
                         </ListItem>
                         <Divider variant="fullWidth" component="li" />
                     </React.Fragment>
-                ))
+                )) : (
+                    <ListItem alignItems="center">
+                        <ListItemText sx={{ textAlign: 'center' }}>
+                            Not requests!!
+                        </ListItemText>
+                    </ListItem>
+                )
                 }
             </List >
         </Demo >
