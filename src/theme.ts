@@ -2,7 +2,7 @@ import { grey, blue, lightBlue, red, deepOrange } from "@mui/material/colors";
 import { PaletteMode } from "@mui/material";
 
 const getPalette = (mode: PaletteMode) => {
-    const palette = {
+    /* const palette = {
         mode,
         primary: {
             light: lightBlue["A400"],
@@ -59,7 +59,16 @@ const getPalette = (mode: PaletteMode) => {
                 paper: grey[800]
             }
         };
-    }
+    } */
+    return {
+        type: mode,
+        primary: {
+            main: '#4a148c',
+        },
+        secondary: {
+            main: '#f50057',
+        },
+    };
 };
 
 const getThemeDesign = (mode: PaletteMode) => ({

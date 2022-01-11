@@ -8,7 +8,7 @@ import Badge from '@mui/material/Badge';
 import MenuItem from '@mui/material/MenuItem';
 import Menu from '@mui/material/Menu';
 import PersonSearchIcon from '@mui/icons-material/PersonSearch';
-import AccountCircleIcon from '@mui/icons-material/AccountCircle';
+import SettingsIcon from '@mui/icons-material/Settings';
 import RequestsIcon from '@mui/icons-material/GroupAdd';
 import ChatsIcon from '@mui/icons-material/Forum';
 import MoreIcon from '@mui/icons-material/MoreVert';
@@ -39,7 +39,7 @@ export default function AppBar() {
         handleMobileMenuClose();
     };
 
-    const handleProfileClick = () => {
+    const handleSettingsClick = () => {
         setTab(AppTab.profile);
         handleMobileMenuClose();
     };
@@ -108,16 +108,16 @@ export default function AppBar() {
                 </IconButton>
                 <p>Requests</p>
             </MenuItem>
-            <MenuItem onClick={handleProfileClick}>
+            <MenuItem onClick={handleSettingsClick}>
                 <IconButton
                     size="large"
                     aria-label="account of current user"
                     aria-controls="primary-search-account-menu"
                     color="inherit"
                 >
-                    <AccountCircleIcon />
+                    <SettingsIcon />
                 </IconButton>
-                <p>Profile</p>
+                <p>Settings</p>
             </MenuItem>
         </Menu>
     );
@@ -170,10 +170,10 @@ export default function AppBar() {
                             edge="end"
                             aria-label="Show profile"
                             aria-haspopup="true"
-                            onClick={handleProfileClick}
+                            onClick={handleSettingsClick}
                             color="inherit"
                         >
-                            <AccountCircleIcon />
+                            <SettingsIcon />
                         </IconButton>
                     </Box>
                     <Box sx={{ display: { xs: 'flex', md: 'none' } }}>

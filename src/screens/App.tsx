@@ -6,6 +6,7 @@ import shallow from "zustand/shallow";
 import { useStore } from "../store";
 import { AppTab } from "../types";
 import FindFriends from "../components/FindFriends";
+import Settings from "../components/Settings";
 
 const App = () => {
     const [tab] = useStore((state) => [state.tab], shallow);
@@ -16,7 +17,7 @@ const App = () => {
             <AppBar />
             {tab === AppTab.chats && <h1>Home</h1>}
             {tab === AppTab.requests && <Notifications />}
-            {tab === AppTab.profile && <h1>Profile</h1>}
+            {tab === AppTab.profile && <Settings />}
             {tab === AppTab.find && <FindFriends />}
         </Container>
     );
