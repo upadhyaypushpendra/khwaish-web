@@ -9,7 +9,7 @@ import Button from '@mui/material/Button';
 import FolderIcon from '@mui/icons-material/Folder';
 import Box from '@mui/material/Box';
 import Divider from '@mui/material/Divider';
-import { getReceivedRequests } from '../services/requests';
+import { acceptRequest, declineRequest, getReceivedRequests } from '../services/requests';
 import { useSnackbar } from 'notistack';
 
 const Demo = styled('div')(({ theme }) => ({
@@ -22,13 +22,26 @@ export default function ReceivedRequests() {
     const snackbar = useSnackbar();
     const [receivedRequests, setReceivedRequests] = React.useState([]);
 
-    const handleAccept = (id: string) => {
+    const handleAccept = async (id: string) => {
         console.log('DEBUG::handleAccept ', id);
+        try {
+            await acceptRequest(id);
+            loadRecievedRequests();
+        } catch (error) {
+            console.log('DEBUG::handleAccept', error);
+            snackbar.enqueueSnackbar("Sorry!! Unable to accept this request.", { variant: "error" });
+        }
     };
 
-    const handleDecline = (id: string) => {
+    const handleDecline = async (id: string) => {
         console.log('DEBUG::handleDecline ', id);
-
+        try {
+            await declineRequest(id);
+            loadRecievedRequests();
+        } catch (error) {
+            console.log('DEBUG::handleDecline', error);
+            snackbar.enqueueSnackbar("Sorry!! Unable to decline the request.", { variant: "error" });
+        }
     };
 
     const loadRecievedRequests = () => {
