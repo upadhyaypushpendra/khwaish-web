@@ -9,6 +9,8 @@ import Button from '@mui/material/Button';
 import FolderIcon from '@mui/icons-material/Folder';
 import Box from '@mui/material/Box';
 import Divider from '@mui/material/Divider';
+import { getReceivedRequests } from '../services/requests';
+import { useSnackbar } from 'notistack';
 
 const Demo = styled('div')(({ theme }) => ({
     backgroundColor: theme.palette.background.default,
@@ -17,6 +19,7 @@ const Demo = styled('div')(({ theme }) => ({
 // const defaultList = [{ id: "1", name: "Raju", about: null }, { id: "2", name: "Golu", about: "About goluuu" }];
 
 export default function ReceivedRequests() {
+    const snackbar = useSnackbar();
     const [receivedRequests, setReceivedRequests] = React.useState([]);
 
     const handleAccept = (id: string) => {
@@ -25,22 +28,37 @@ export default function ReceivedRequests() {
 
     const handleDecline = (id: string) => {
         console.log('DEBUG::handleDecline ', id);
+
     };
+
+    const loadRecievedRequests = () => {
+        (async () => {
+            try {
+                const { requests } = await getReceivedRequests();
+                setReceivedRequests(requests);
+            } catch (error) {
+                console.log('DEBUG::loadRecievedRequests', error);
+                snackbar.enqueueSnackbar("Sorry!! Unable to load the received requests!", { variant: "error" });
+            }
+        })();
+    };
+
+    React.useEffect(loadRecievedRequests, []);
 
     return (
         <Demo>
             <List>
-                {receivedRequests.length ? receivedRequests?.map(({ id, name, about }) => (
-                    <React.Fragment key={id}>
+                {receivedRequests.length ? receivedRequests?.map(({ _id, name, about }) => (
+                    <React.Fragment key={_id}>
                         <ListItem
-                            key={id}
+                            key={_id}
                             secondaryAction={
                                 <Box display="flex" alignItems="center" justifyContent="space-between">
                                     <Button
                                         color="primary"
                                         variant="contained"
                                         sx={{ margin: "0 8px" }}
-                                        onClick={() => handleAccept(id)}
+                                        onClick={() => handleAccept(_id)}
                                     >
                                         Accept
                                     </Button>
@@ -48,7 +66,7 @@ export default function ReceivedRequests() {
                                         color="error"
                                         variant="outlined"
                                         sx={{ margin: "0 8px" }}
-                                        onClick={() => handleDecline(id)}
+                                        onClick={() => handleDecline(_id)}
                                     >
                                         Decline
                                     </Button>

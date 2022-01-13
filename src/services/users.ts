@@ -1,3 +1,4 @@
+import Session from "../utils/Session";
 import Client from "./_client";
 
 const getUsers = async (input: string) => {
@@ -12,5 +13,16 @@ const getUsers = async (input: string) => {
     }
 };
 
+const deleteFriend = async (friendId: string) => {
+    const result = await new Client({
+        path: `/users/${Session.userId}/friends/${friendId}`
+    }).delete();
 
-export { getUsers };
+    if (!(result.ok || result.code === 200)) {
+        throw new Error(result.message || 'Uh Oh! Unable to get any users.');
+    } else {
+        return result;
+    }
+};
+
+export { getUsers, deleteFriend };

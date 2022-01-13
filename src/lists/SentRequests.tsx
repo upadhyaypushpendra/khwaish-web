@@ -9,36 +9,60 @@ import Button from '@mui/material/Button';
 import FolderIcon from '@mui/icons-material/Folder';
 import Box from '@mui/material/Box';
 import Divider from '@mui/material/Divider';
+import { declineRequest, getSentRequests } from '../services/requests';
+import { useSnackbar } from 'notistack';
 
 const Demo = styled('div')(({ theme }) => ({
     backgroundColor: theme.palette.background.paper,
 }));
 
-// const defaultList = [{ id: "1", name: "Raju", about: null }, { id: "2", name: "Golu", about: "About me" }];
+// const defaultList = [{ _id: "1", name: "Raju", about: null }, { _id: "2", name: "Golu", about: "About me" }];
 
 export default function SentRequests() {
+    const snackbar = useSnackbar();
     const [sentRequests, setSentRequests] = React.useState([]);
 
-    const handleDelete = (id: string) => {
+    const handleDecline = async (id: string) => {
         console.log('DEBUG::handleDecline ', id);
+        try {
+            await declineRequest(id);
+            loadSentRequests();
+        } catch (error) {
+            console.log('DEBUG::handleDelete', error);
+            snackbar.enqueueSnackbar("Sorry!! Unable to decline the request.", { variant: "error" });
+        }
     };
+
+    const loadSentRequests = () => {
+        (async () => {
+            try {
+                const { requests } = await getSentRequests();
+                setSentRequests(requests);
+            } catch (error) {
+                console.log('DEBUG::loadSentRequests', error);
+                snackbar.enqueueSnackbar("Sorry!! Unable to load the sent requests!", { variant: "error" });
+            }
+        })();
+    };
+
+    React.useEffect(loadSentRequests, []);
 
     return (
         <Demo>
             <List>
-                {sentRequests.length ? sentRequests?.map(({ id, name, about }) => (
-                    <React.Fragment key={id}>
+                {sentRequests.length ? sentRequests?.map(({ _id, receiver }: any) => (
+                    <React.Fragment key={_id}>
                         <ListItem
-                            key={id}
+                            key={_id}
                             secondaryAction={
                                 <Box display="flex" alignItems="center" justifyContent="space-between">
                                     <Button
                                         color="error"
                                         variant="contained"
                                         sx={{ margin: "0 8px" }}
-                                        onClick={() => handleDelete(id)}
+                                        onClick={() => handleDecline(_id)}
                                     >
-                                        Delete
+                                        Decline
                                     </Button>
                                 </Box>
 
@@ -50,8 +74,8 @@ export default function SentRequests() {
                                 </Avatar>
                             </ListItemAvatar>
                             <ListItemText
-                                primary={name}
-                                secondary={about ? about : null}
+                                primary={receiver?.name}
+                                secondary={receiver?.about ? receiver?.about : null}
                             />
                         </ListItem>
                         <Divider variant="fullWidth" component="li" />

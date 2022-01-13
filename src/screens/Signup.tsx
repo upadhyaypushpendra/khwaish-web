@@ -18,6 +18,8 @@ import { validateAndParsePhone } from "../utils/phone";
 import HtmlTooltip from "../components/HtmlTooltop";
 import TransitionAlert from "../components/TransitionAlert";
 import AppLogo from "../components/AppLogo";
+import PasswordField from "../components/PasswordField";
+import PhoneNumberField from "../components/PhoneNumberField";
 
 const defaultErrors = {
     phone: "",
@@ -86,51 +88,14 @@ const Signup = () => {
                     Lets get some details for Khwaish
                 </Typography>
                 <Box component="form" onSubmit={handleSubmit} sx={{ mt: 1 }} noValidate>
-                    <HtmlTooltip title="Phone number with country code i.e. +91xxxxxxxxxx">
-                        <TextField
-                            variant="standard"
-                            margin="normal"
-                            required
-                            fullWidth
-                            id="phone"
-                            label="Phone Address"
-                            name="phone"
-                            autoComplete="phone"
-                            autoFocus
-                            placeholder="Your phone number please..."
-                            defaultValue="+91"
-                            helperText={errors.phone}
-                            error={Boolean(errors.phone)}
-                        />
-                    </HtmlTooltip>
-                    <HtmlTooltip
-                        title={
-                            <React.Fragment>
-                                <Typography variant="body1">Password must Contains:</Typography>
-                                <ul>
-                                    <li>Atleast 8 characters</li>
-                                    <li>A Lowercase character(a-z)</li>
-                                    <li>A Uppercase character(A-Z)</li>
-                                    <li>A number character(0-9)</li>
-                                    <li>A special character(@$!%*#?&)</li>
-                                </ul>
-                            </React.Fragment>
-                        }
-                    >
-                        <TextField
-                            variant="standard"
-                            margin="normal"
-                            required
-                            fullWidth
-                            name="password"
-                            label="Password"
-                            type="password"
-                            id="password"
-                            placeholder="Set a strong password..."
-                            helperText={errors.password}
-                            error={Boolean(errors.password)}
-                        />
-                    </HtmlTooltip>
+                    <PhoneNumberField
+                        helperText={errors.phone}
+                        error={Boolean(errors.phone)}
+                    />
+                    <PasswordField
+                        helperText={errors.password}
+                        error={Boolean(errors.password)}
+                    />
                     <TextField
                         variant="standard"
                         margin="normal"

@@ -5,85 +5,92 @@ const khwaishIsLoggedIn = Symbol("khwaishIsLoggedIn");
 const khwaishIsCredentials = Symbol("khwaishIsCredentials");
 
 function setIsLoggedInCookie() {
-  const domain = process.env.REACT_APP_COOKIE_DOMAIN || "localhost";
+    const domain = process.env.REACT_APP_COOKIE_DOMAIN || "localhost";
 
-  if (khwaishIsLoggedIn.description)
-    Cookies.set(khwaishIsLoggedIn.description, true.toString(), {
-      expires: 30,
-      domain
-    });
+    if (khwaishIsLoggedIn.description)
+        Cookies.set(khwaishIsLoggedIn.description, true.toString(), {
+            expires: 30,
+            domain
+        });
 }
 
 class Session {
-  userId: string = "";
-  name: string = "";
-  phone: string = "";
-  about: string = "";
-  accessToken: string = "";
-  accessTokenExpiry: number = Date.now();
-  refreshToken: string = "";
-  refreshTokenExpiry: number = Date.now();
+    userId: string = "";
+    name: string = "";
+    phone: string = "";
+    about: string = "";
+    friends: [] = [];
+    accessToken: string = "";
+    accessTokenExpiry: number = Date.now();
+    refreshToken: string = "";
+    refreshTokenExpiry: number = Date.now();
 
-  onCreateSession({
-    userId,
-    name,
-    phone,
-    about,
-    accessToken,
-    accessExpireAt,
-    refreshToken,
-    refreshExpireAt
-  }: any): void {
-    this.userId = userId;
-    this.name = name;
-    this.phone = phone;
-    this.about = about;
-    this.accessToken = accessToken;
-    this.accessTokenExpiry = new Date(accessExpireAt).getTime();
-    this.refreshToken = refreshToken;
-    this.refreshTokenExpiry = new Date(refreshExpireAt).getTime();
-    setIsLoggedInCookie();
-    localStorage.setItem("khwaishRefreshTokenExpiry", this.refreshTokenExpiry.toString());
-    localStorage.setItem("khwaishRefreshToken", this.refreshToken);
-  }
+    _setUser(user: any) {
+        this.userId = user._id;
+        this.name = user.name;
+        this.phone = user.phone;
+        this.about = user.about;
+        this.friends = user.friends;
+    }
 
-  onRestoreSession({ accessToken, accessExpireAt }: any): void {
-    this.accessToken = accessToken;
-    this.accessTokenExpiry = new Date(accessExpireAt).getTime();
-    setIsLoggedInCookie();
-  }
+    _unsetUser() {
+        this.userId = "";
+        this.name = "";
+        this.phone = "";
+        this.about = "";
+        this.friends = [];
+    }
 
-  clearSession(): void {
-    this.accessToken = "";
-    this.accessTokenExpiry = Date.now();
-    this.refreshToken = "";
-    this.refreshTokenExpiry = Date.now();
-    if (khwaishIsLoggedIn.description) Cookies.remove(khwaishIsLoggedIn.description);
-    localStorage.removeItem("khwaishRefreshTokenExpiry");
-    localStorage.removeItem("khwaishRefreshToken");
-    this.unRememberMe();
-  }
+    onCreateSession({ user, tokens }: any): void {
+        this._setUser(user);
+        this.accessToken = tokens.accessToken;
+        this.accessTokenExpiry = new Date(tokens.accessExpireAt).getTime();
+        this.refreshToken = tokens.refreshToken;
+        this.refreshTokenExpiry = new Date(tokens.refreshExpireAt).getTime();
+        setIsLoggedInCookie();
+        localStorage.setItem("khwaishRefreshTokenExpiry", this.refreshTokenExpiry.toString());
+        localStorage.setItem("khwaishRefreshToken", this.refreshToken);
+    }
 
-  isLoggedIn(): boolean {
-    return Boolean(khwaishIsLoggedIn.description && Cookies.get(khwaishIsLoggedIn.description));
-  }
+    onRestoreSession({ accessToken, accessExpireAt, user }: any): void {
+        this._setUser(user);
+        this.accessToken = accessToken;
+        this.accessTokenExpiry = new Date(accessExpireAt).getTime();
+        setIsLoggedInCookie();
+    }
 
-  isRemembered(): false | SignInPayload {
-    if (khwaishIsCredentials.description) {
-      const credentialsRemembered = localStorage.getItem(khwaishIsCredentials.description);
-      return Boolean(credentialsRemembered) ? decrypt(credentialsRemembered as string) : false;
-    } else return false;
-  }
+    clearSession(): void {
+        this.accessToken = "";
+        this.accessTokenExpiry = Date.now();
+        this.refreshToken = "";
+        this.refreshTokenExpiry = Date.now();
+        if (khwaishIsLoggedIn.description) Cookies.remove(khwaishIsLoggedIn.description);
+        localStorage.removeItem("khwaishRefreshTokenExpiry");
+        localStorage.removeItem("khwaishRefreshToken");
+        this.unRememberMe();
+        this._unsetUser();
+    }
 
-  rememberMe({ phone, password }: SignInPayload): void {
-    if (khwaishIsCredentials.description)
-      localStorage.setItem(khwaishIsCredentials.description, encrypt({ phone, password }));
-  }
+    isLoggedIn(): boolean {
+        return Boolean(khwaishIsLoggedIn.description && Cookies.get(khwaishIsLoggedIn.description));
+    }
 
-  unRememberMe(): void {
-    if (khwaishIsCredentials.description)
-      localStorage.removeItem(khwaishIsCredentials.description);
-  }
+    isRemembered(): false | SignInPayload {
+        if (khwaishIsCredentials.description) {
+            const credentialsRemembered = localStorage.getItem(khwaishIsCredentials.description);
+            return Boolean(credentialsRemembered) ? decrypt(credentialsRemembered as string) : false;
+        } else return false;
+    }
+
+    rememberMe({ phone, password }: SignInPayload): void {
+        if (khwaishIsCredentials.description)
+            localStorage.setItem(khwaishIsCredentials.description, encrypt({ phone, password }));
+    }
+
+    unRememberMe(): void {
+        if (khwaishIsCredentials.description)
+            localStorage.removeItem(khwaishIsCredentials.description);
+    }
 }
 
 export default new Session();

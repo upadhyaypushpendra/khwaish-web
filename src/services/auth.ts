@@ -3,7 +3,7 @@ import Client from "./_client";
 
 const restoreSession = async () => {
     const result = await new Client({
-        path: "/auth/access"
+        path: "/auth/restore"
     }).get();
 
     if (!(result.ok || result.code === 200)) {
@@ -27,13 +27,7 @@ const signIn = async (data: SignInPayload) => {
     if (!(result.ok || result.code === 200)) {
         throw new Error(result.message || 'Uh Oh! Unable to log you in.');
     } else {
-        Session.onCreateSession({
-            userId: result._id,
-            name: result.name,
-            phone: result.phone,
-            about: result.about,
-            ...result.tokens,
-        });
+        Session.onCreateSession(result);
         return result;
     }
 };
@@ -46,13 +40,7 @@ const signup = async (data: SignupPayload) => {
         }).post();
 
         if (result.ok || result.code === 200) {
-            Session.onCreateSession({
-                userId: result._id,
-                name: result.name,
-                phone: result.phone,
-                about: result.about,
-                ...result.tokens,
-            });
+            Session.onCreateSession(result);
             return result;
         }
     } catch (error) {

@@ -53,7 +53,7 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
     },
 }));
 
-// const defaultList = [{ id: "1", name: "Raju", about: null }, { id: "2", name: "Golu", about: "About goluuu" }];
+// const defaultList = [{ _id: "1", name: "Raju", about: null }, { _id: "2", name: "Golu", about: "About goluuu" }];
 
 const TIMEOUT = 500; //milliseconds
 
@@ -66,8 +66,8 @@ export default function FindFriends(props: any) {
     const handleSendRequest = async (id: string) => {
         console.log('DEBUG::handleSendRequest ', id);
         try {
-            await sendRequest(id);
-            snackbar.enqueueSnackbar("Request Sent!!", {
+            const { message } = await sendRequest(id);
+            snackbar.enqueueSnackbar(message || "Request Sent!!", {
                 variant: "success",
             });
         } catch (error) {
@@ -120,17 +120,17 @@ export default function FindFriends(props: any) {
             <ListWrapper>
                 <List>
                     {result.length ?
-                        (result?.map(({ id, name, about }) => (
-                            <React.Fragment key={id}>
+                        (result?.map(({ _id, name, about }) => (
+                            <React.Fragment key={_id}>
                                 <ListItem
-                                    key={id}
+                                    key={_id}
                                     secondaryAction={
                                         <Box display="flex" alignItems="center" justifyContent="space-between">
                                             <Button
                                                 color="primary"
                                                 variant="contained"
                                                 sx={{ margin: "0 8px" }}
-                                                onClick={() => handleSendRequest(id)}
+                                                onClick={() => handleSendRequest(_id)}
                                             >
                                                 Send Request
                                             </Button>

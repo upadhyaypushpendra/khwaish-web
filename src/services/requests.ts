@@ -1,9 +1,13 @@
 import Session from "../utils/Session";
 import Client from "./_client";
 
-const sendRequest = async (userId: string) => {
+const sendRequest = async (receiverId: string) => {
     const result = await new Client({
-        path: `/requests/${Session.userId}/send/${userId}`
+        path: `/requests`,
+        payload: {
+            senderId: Session.userId,
+            receiverId,
+        }
     }).post();
 
     if (!(result.ok || result.code === 200)) {
@@ -37,5 +41,30 @@ const getReceivedRequests = async () => {
     }
 };
 
+const acceptRequest = async (requestId: string) => {
+    const result = await new Client({
+        path: `/requests/${requestId}/accept`
+    }).post();
 
-export { getSentRequests, getReceivedRequests, sendRequest };
+    if (!(result.ok || result.code === 200)) {
+        throw new Error(result.message || 'Uh Oh! Unable to accept this request.');
+    } else {
+        return result;
+    }
+};
+
+const declineRequest = async (requestId: string) => {
+    const result = await new Client({
+        path: `/requests/${requestId}/decline`
+    }).post();
+
+    if (!(result.ok || result.code === 200)) {
+        throw new Error(result.message || 'Uh Oh! Unable to decline this request.');
+    } else {
+        return result;
+    }
+};
+
+
+
+export { getSentRequests, getReceivedRequests, sendRequest, acceptRequest, declineRequest };
