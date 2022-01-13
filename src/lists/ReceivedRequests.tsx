@@ -48,7 +48,7 @@ export default function ReceivedRequests() {
     return (
         <Demo>
             <List>
-                {receivedRequests.length ? receivedRequests?.map(({ _id, name, about }) => (
+                {receivedRequests.length ? receivedRequests?.map(({ _id, sender }: any) => (
                     <React.Fragment key={_id}>
                         <ListItem
                             key={_id}
@@ -79,7 +79,7 @@ export default function ReceivedRequests() {
                                     <FolderIcon />
                                 </Avatar>
                             </ListItemAvatar>
-                            <ListItemText primary={name} secondary={about ? about : null} />
+                            <ListItemText primary={sender?.name} secondary={sender?.about ? sender?.about : null} />
                         </ListItem>
                         <Divider variant="fullWidth" component="li" />
                     </React.Fragment>
