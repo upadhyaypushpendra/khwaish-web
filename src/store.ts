@@ -1,6 +1,6 @@
 import { PaletteMode } from "@mui/material";
 import create, { SetState, GetState } from "zustand";
-import { AppTab } from "./types";
+import { ChatsSubSection, Friend, Section, SubSection } from "./types";
 
 type User = {
     name?: string;
@@ -13,7 +13,9 @@ const defaults = {
     user: {},
     emojiOpen: false,
     theme: (localStorage.getItem("theme") === "light" ? "light" : "dark") as PaletteMode,
-    tab: AppTab.chats,
+    section: Section.chats,
+    subSection: ChatsSubSection.list,
+    activeChat: null,
 };
 
 type Store = {
@@ -21,12 +23,16 @@ type Store = {
     user: User;
     emojiOpen: boolean;
     theme: PaletteMode;
-    tab: string;
+    section: Section;
+    subSection: SubSection;
+    activeChat: Friend | null;
     setPlayback: (isLoggedIn: boolean) => void;
     setUser: (user: User) => void;
     toggleEmojiOpen: () => void;
     setTheme: (theme: PaletteMode) => void;
-    setTab: (tab: AppTab) => void;
+    setSection: (section: Section) => void;
+    setSubSection: (section: SubSection) => void;
+    setActiveChat: (activeChat: Friend) => void;
     reset: () => void;
 };
 
@@ -37,7 +43,9 @@ const useStore = create<Store>(
         setUser: (user: User) => set({ user }),
         toggleEmojiOpen: () => set({ emojiOpen: !get().emojiOpen }),
         setTheme: (theme: PaletteMode) => set({ theme }),
-        setTab: (tab: AppTab) => set({ tab }),
+        setSection: (section: Section) => set({ section }),
+        setSubSection: (subSection: SubSection) => set({ subSection }),
+        setActiveChat: (activeChat: Friend) => set({ activeChat }),
         reset: () => {
             set(defaults, true);
         }

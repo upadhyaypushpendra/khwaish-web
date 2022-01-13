@@ -5,6 +5,9 @@ import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
 import ReceivedRequests from '../lists/ReceivedRequests';
 import SentRequests from '../lists/SentRequests';
+import { RequestsSubSection } from '../types';
+import { useStore } from '../store';
+import shallow from 'zustand/shallow';
 
 interface TabPanelProps {
     children?: React.ReactNode;
@@ -32,7 +35,7 @@ function TabPanel(props: TabPanelProps) {
     );
 }
 
-function a11yProps(index: number) {
+function a11yProps(index: RequestsSubSection) {
     return {
         id: `simple-tab-${index}`,
         'aria-controls': `simple-tabpanel-${index}`,
@@ -40,24 +43,24 @@ function a11yProps(index: number) {
 }
 
 export default function Notifications() {
-    const [value, setValue] = React.useState(0);
+    const [subSection, setSubSection] = useStore((state) => [state.subSection, state.setSubSection], shallow);
 
-    const handleChange = (event: React.SyntheticEvent, newValue: number) => {
-        setValue(newValue);
+    const handleChange = (event: React.SyntheticEvent, newValue: RequestsSubSection) => {
+        setSubSection(newValue);
     };
 
     return (
         <Box sx={{ width: '100%' }}>
             <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
-                <Tabs value={value} onChange={handleChange} aria-label="basic tabs example">
-                    <Tab label="Received" {...a11yProps(1)} />
-                    <Tab label="Sent" {...a11yProps(0)} />
+                <Tabs value={subSection} onChange={handleChange} aria-label="basic tabs example">
+                    <Tab label="Received" {...a11yProps(RequestsSubSection.received)} />
+                    <Tab label="Sent" {...a11yProps(RequestsSubSection.sent)} />
                 </Tabs>
             </Box>
-            <TabPanel value={value} index={0}>
+            <TabPanel value={subSection} index={RequestsSubSection.received}>
                 <ReceivedRequests />
             </TabPanel>
-            <TabPanel value={value} index={1}>
+            <TabPanel value={subSection} index={RequestsSubSection.sent}>
                 <SentRequests />
             </TabPanel>
         </Box>

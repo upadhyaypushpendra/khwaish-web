@@ -4,21 +4,22 @@ import AppBar from "../components/AppBar";
 import Notifications from "../components/Notifications";
 import shallow from "zustand/shallow";
 import { useStore } from "../store";
-import { AppTab } from "../types";
+import { Section } from "../types";
 import FindFriends from "../components/FindFriends";
 import Settings from "../components/Settings";
+import Chats from "../components/Chats";
 
 const App = () => {
-    const [tab] = useStore((state) => [state.tab], shallow);
+    const [section] = useStore((state) => [state.section], shallow);
 
     return (
         <Container component="main" style={{ margin: 0, padding: 0, maxWidth: '100%' }}>
             <CssBaseline />
             <AppBar />
-            {tab === AppTab.chats && <h1>Home</h1>}
-            {tab === AppTab.requests && <Notifications />}
-            {tab === AppTab.profile && <Settings />}
-            {tab === AppTab.find && <FindFriends />}
+            {section === Section.chats && <Chats />}
+            {section === Section.requests && <Notifications />}
+            {section === Section.profile && <Settings />}
+            {section === Section.find && <FindFriends />}
         </Container>
     );
 };

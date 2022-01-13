@@ -15,7 +15,7 @@ import MoreIcon from '@mui/icons-material/MoreVert';
 import AppLogo from './AppLogo';
 import shallow from 'zustand/shallow';
 import { useStore } from '../store';
-import { AppTab } from '../types';
+import { Section } from '../types';
 
 
 export default function AppBar() {
@@ -24,7 +24,7 @@ export default function AppBar() {
 
     const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
 
-    const [tab, setTab] = useStore((state) => [state.tab, state.setTab], shallow);
+    const [section, setSection] = useStore((state) => [state.section, state.setSection], shallow);
 
     const handleMobileMenuClose = () => {
         setMobileMoreAnchorEl(null);
@@ -35,22 +35,22 @@ export default function AppBar() {
     };
 
     const handleRequestsClick = () => {
-        setTab(AppTab.requests);
+        setSection(Section.requests);
         handleMobileMenuClose();
     };
 
     const handleSettingsClick = () => {
-        setTab(AppTab.profile);
+        setSection(Section.profile);
         handleMobileMenuClose();
     };
 
     const handleChatsClick = () => {
-        setTab(AppTab.chats);
+        setSection(Section.chats);
         handleMobileMenuClose();
     }
 
     const handleFindClick = () => {
-        setTab(AppTab.find);
+        setSection(Section.find);
         handleMobileMenuClose();
     }
 
@@ -131,7 +131,7 @@ export default function AppBar() {
                         variant="h6"
                         noWrap
                         component="div"
-                        sx={{ display: { xs: 'none', sm: 'block' } }}
+                        sx={{ display: { xs: 'block', sm: 'block' } }}
                     >
                         Khwaish
                     </Typography>
