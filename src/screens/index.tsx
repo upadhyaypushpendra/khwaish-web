@@ -14,7 +14,7 @@ import SessionProvider from "../components/SessionProvider";
 import Session from "../utils/Session";
 import { useStore } from "../store";
 import shallow from "zustand/shallow";
-import { Section, SubSection } from "../types";
+import { ChatsSubSection, FndSubSection, ProfileSubSection, RequestsSubSection, Section, SubSection } from "../types";
 
 const Screens = () => {
     const navigate = useNavigate();
@@ -44,6 +44,10 @@ const Screens = () => {
     */
     React.useEffect(() => {
         const unsubscribeSection = useStore.subscribe(async (section: Section) => {
+            if (section === Section.requests) setSubSection(RequestsSubSection.received);
+            if (section === Section.chats) setSubSection(ChatsSubSection.list);
+            if (section === Section.find) setSubSection(FndSubSection.find);
+            if (section === Section.profile) setSubSection(ProfileSubSection.profile);
             sessionStorage.setItem('section', section);
         }, state => state.section);
 
@@ -55,7 +59,7 @@ const Screens = () => {
     */
     React.useEffect(() => {
         const unsubscribeSubSection = useStore.subscribe(async (subSection: SubSection) => {
-            sessionStorage.setItem('subSection', subSection?.toString());
+            sessionStorage.setItem('subSection', subSection);
         }, state => state.subSection);
 
         return unsubscribeSubSection;
@@ -68,7 +72,7 @@ const Screens = () => {
         const section = sessionStorage.getItem('section');
         if (Boolean(section)) setSection(section as Section);
         const subSection = sessionStorage.getItem('subSection');
-        // if (Boolean(subSection)) setSubSection(subSection as unknown as SubSection);
+        if (Boolean(subSection)) setSubSection(subSection as SubSection);
 
     }, []);
 

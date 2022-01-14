@@ -11,6 +11,7 @@ import Box from '@mui/material/Box';
 import Divider from '@mui/material/Divider';
 import { acceptRequest, declineRequest, getReceivedRequests } from '../services/requests';
 import { useSnackbar } from 'notistack';
+import Session from '../utils/Session';
 
 const Demo = styled('div')(({ theme }) => ({
     backgroundColor: theme.palette.background.default,
@@ -45,18 +46,19 @@ export default function ReceivedRequests() {
     };
 
     const loadRecievedRequests = () => {
-        (async () => {
-            try {
-                const { requests } = await getReceivedRequests();
-                setReceivedRequests(requests);
-            } catch (error) {
-                console.log('DEBUG::loadRecievedRequests', error);
-                snackbar.enqueueSnackbar("Sorry!! Unable to load the received requests!", { variant: "error" });
-            }
-        })();
+        if (Session.userId)
+            (async () => {
+                try {
+                    const { requests } = await getReceivedRequests();
+                    setReceivedRequests(requests);
+                } catch (error) {
+                    console.log('DEBUG::loadRecievedRequests', error);
+                    snackbar.enqueueSnackbar("Sorry!! Unable to load the received requests!", { variant: "error" });
+                }
+            })();
     };
 
-    React.useEffect(loadRecievedRequests, []);
+    React.useEffect(loadRecievedRequests, [Session.userId]);
 
     return (
         <Demo>
@@ -99,7 +101,7 @@ export default function ReceivedRequests() {
                 )) : (
                     <ListItem alignItems="center">
                         <ListItemText sx={{ textAlign: 'center' }}>
-                            Not requests!!
+                            You don't have any pending requests !!
                         </ListItemText>
                     </ListItem>
                 )}

@@ -11,6 +11,7 @@ import Box from '@mui/material/Box';
 import Divider from '@mui/material/Divider';
 import { declineRequest, getSentRequests } from '../services/requests';
 import { useSnackbar } from 'notistack';
+import Session from '../utils/Session';
 
 const Demo = styled('div')(({ theme }) => ({
     backgroundColor: theme.palette.background.paper,
@@ -34,18 +35,19 @@ export default function SentRequests() {
     };
 
     const loadSentRequests = () => {
-        (async () => {
-            try {
-                const { requests } = await getSentRequests();
-                setSentRequests(requests);
-            } catch (error) {
-                console.log('DEBUG::loadSentRequests', error);
-                snackbar.enqueueSnackbar("Sorry!! Unable to load the sent requests!", { variant: "error" });
-            }
-        })();
+        if (Session.userId)
+            (async () => {
+                try {
+                    const { requests } = await getSentRequests();
+                    setSentRequests(requests);
+                } catch (error) {
+                    console.log('DEBUG::loadSentRequests', error);
+                    snackbar.enqueueSnackbar("Sorry!! Unable to load the sent requests!", { variant: "error" });
+                }
+            })();
     };
 
-    React.useEffect(loadSentRequests, []);
+    React.useEffect(loadSentRequests, [Session.userId]);
 
     return (
         <Demo>
@@ -83,7 +85,7 @@ export default function SentRequests() {
                 )) : (
                     <ListItem alignItems="center">
                         <ListItemText sx={{ textAlign: 'center' }}>
-                            Not requests!!
+                            You don't have any requests!!
                         </ListItemText>
                     </ListItem>
                 )

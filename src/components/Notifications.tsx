@@ -5,14 +5,14 @@ import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
 import ReceivedRequests from '../lists/ReceivedRequests';
 import SentRequests from '../lists/SentRequests';
-import { RequestsSubSection } from '../types';
+import { RequestsSubSection, Section, SubSection } from '../types';
 import { useStore } from '../store';
 import shallow from 'zustand/shallow';
 
 interface TabPanelProps {
     children?: React.ReactNode;
-    index: number;
-    value: number;
+    index: string;
+    value: string;
 }
 
 function TabPanel(props: TabPanelProps) {
@@ -42,17 +42,25 @@ function a11yProps(index: RequestsSubSection) {
     };
 }
 
+const isRequestsSubSection =
+    (subSection: SubSection) =>
+        subSection === RequestsSubSection.received || subSection === RequestsSubSection.sent;
+
 export default function Notifications() {
-    const [subSection, setSubSection] = useStore((state) => [state.subSection, state.setSubSection], shallow);
+    const [subSection, setSubSection] =
+        useStore((state) => [state.subSection, state.setSubSection], shallow);
 
     const handleChange = (event: React.SyntheticEvent, newValue: RequestsSubSection) => {
-        setSubSection(newValue);
+        if (typeof newValue === 'number' && newValue === 0) setSubSection(RequestsSubSection.received);
+        if (typeof newValue === 'number' && newValue === 1) setSubSection(RequestsSubSection.sent);
     };
 
     return (
         <Box sx={{ width: '100%' }}>
             <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
-                <Tabs value={subSection} onChange={handleChange} aria-label="basic tabs example">
+                <Tabs
+                    value={isRequestsSubSection(subSection) ? subSection : RequestsSubSection.received}
+                    onChange={handleChange} aria-label="basic tabs example">
                     <Tab label="Received" {...a11yProps(RequestsSubSection.received)} />
                     <Tab label="Sent" {...a11yProps(RequestsSubSection.sent)} />
                 </Tabs>
@@ -63,6 +71,6 @@ export default function Notifications() {
             <TabPanel value={subSection} index={RequestsSubSection.sent}>
                 <SentRequests />
             </TabPanel>
-        </Box>
+        </Box >
     );
 }

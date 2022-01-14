@@ -6,18 +6,22 @@ export enum Section {
 }
 
 export enum ChatsSubSection {
-    list,
-    chat,
+    list = 'list',
+    chat = 'chat',
 }
 
 export enum RequestsSubSection {
-    sent,
-    received
+    sent = 'sent',
+    received = 'received',
 }
 
-export enum ProfileSubSection { }
+export enum ProfileSubSection {
+    profile = 'profile',
+}
 
-export enum FndSubSection { }
+export enum FndSubSection {
+    find = 'find'
+}
 
 export type SubSection = ChatsSubSection | RequestsSubSection | ProfileSubSection | FndSubSection;
 

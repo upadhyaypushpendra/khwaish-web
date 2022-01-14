@@ -15,7 +15,7 @@ import MoreIcon from '@mui/icons-material/MoreVert';
 import AppLogo from './AppLogo';
 import shallow from 'zustand/shallow';
 import { useStore } from '../store';
-import { Section } from '../types';
+import { ChatsSubSection, RequestsSubSection, Section } from '../types';
 
 
 export default function AppBar() {
@@ -24,7 +24,8 @@ export default function AppBar() {
 
     const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
 
-    const [section, setSection] = useStore((state) => [state.section, state.setSection], shallow);
+    const [section, setSection, subSection] =
+        useStore((state) => [state.section, state.setSection, state.subSection], shallow);
 
     const handleMobileMenuClose = () => {
         setMobileMoreAnchorEl(null);
@@ -123,74 +124,75 @@ export default function AppBar() {
     );
 
     return (
-        <Box sx={{ flexGrow: 1 }}>
-            <MUIAppBar position="static" sx={{ backgroundColor: '#7b1fa2'}}>
-                <Toolbar>
-                    <AppLogo />
-                    <Typography
-                        variant="h6"
-                        noWrap
-                        component="div"
-                        sx={{ display: { xs: 'block', sm: 'block' } }}
-                    >
-                        Khwaish
-                    </Typography>
-                    <Box sx={{ flexGrow: 1 }} />
-                    <Box sx={{ display: { xs: 'none', md: 'flex' } }}>
-                        <IconButton
-                            size="large"
-                            aria-label="Show chats"
-                            color="inherit"
-                            onClick={handleChatsClick}
+        !(section === Section.chats && subSection === ChatsSubSection.chat) ?
+            (<Box sx={{ flexGrow: 1 }}>
+                <MUIAppBar position="static" sx={{ backgroundColor: '#7b1fa2' }}>
+                    <Toolbar>
+                        <AppLogo />
+                        <Typography
+                            variant="h6"
+                            noWrap
+                            component="div"
+                            sx={{ display: { xs: 'block', sm: 'block' } }}
                         >
-                            <Badge badgeContent={0} color="info">
-                                <ChatsIcon />
-                            </Badge>
-                        </IconButton>
-                        <IconButton
-                            size="large"
-                            aria-label="Show requests"
-                            color="inherit"
-                            onClick={handleRequestsClick}
-                        >
-                            <Badge badgeContent={0} color="info">
-                                <RequestsIcon />
-                            </Badge>
-                        </IconButton>
-                        <IconButton
-                            size="large"
-                            aria-label="Find friends"
-                            color="inherit"
-                            onClick={handleFindClick}
-                        >
-                            <PersonSearchIcon />
-                        </IconButton>
-                        <IconButton
-                            size="large"
-                            edge="end"
-                            aria-label="Show profile"
-                            aria-haspopup="true"
-                            onClick={handleSettingsClick}
-                            color="inherit"
-                        >
-                            <SettingsIcon />
-                        </IconButton>
-                    </Box>
-                    <Box sx={{ display: { xs: 'flex', md: 'none' } }}>
-                        <IconButton
-                            size="large"
-                            aria-label="show more"
-                            aria-controls={mobileMenuId}
-                            aria-haspopup="true"
-                            onClick={handleMobileMenuOpen}
-                            color="inherit"
-                        >
-                            <MoreIcon />
-                        </IconButton>
-                    </Box>
-                </Toolbar>
-            </MUIAppBar>
-            {renderMobileMenu}
-        </Box>
+                            Khwaish
+                        </Typography>
+                        <Box sx={{ flexGrow: 1 }} />
+                        <Box sx={{ display: { xs: 'none', md: 'flex' } }}>
+                            <IconButton
+                                size="large"
+                                aria-label="Show chats"
+                                color="inherit"
+                                onClick={handleChatsClick}
+                            >
+                                <Badge badgeContent={0} color="info">
+                                    <ChatsIcon />
+                                </Badge>
+                            </IconButton>
+                            <IconButton
+                                size="large"
+                                aria-label="Show requests"
+                                color="inherit"
+                                onClick={handleRequestsClick}
+                            >
+                                <Badge badgeContent={0} color="info">
+                                    <RequestsIcon />
+                                </Badge>
+                            </IconButton>
+                            <IconButton
+                                size="large"
+                                aria-label="Find friends"
+                                color="inherit"
+                                onClick={handleFindClick}
+                            >
+                                <PersonSearchIcon />
+                            </IconButton>
+                            <IconButton
+                                size="large"
+                                edge="end"
+                                aria-label="Show profile"
+                                aria-haspopup="true"
+                                onClick={handleSettingsClick}
+                                color="inherit"
+                            >
+                                <SettingsIcon />
+                            </IconButton>
+                        </Box>
+                        <Box sx={{ display: { xs: 'flex', md: 'none' } }}>
+                            <IconButton
+                                size="large"
+                                aria-label="show more"
+                                aria-controls={mobileMenuId}
+                                aria-haspopup="true"
+                                onClick={handleMobileMenuOpen}
+                                color="inherit"
+                            >
+                                <MoreIcon />
+                            </IconButton>
+                        </Box>
+                    </Toolbar>
+                </MUIAppBar>
+                {renderMobileMenu}
+            </Box>) : null
     );
 }
