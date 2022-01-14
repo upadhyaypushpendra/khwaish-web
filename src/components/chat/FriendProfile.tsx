@@ -1,4 +1,4 @@
-import { Box, Icon, IconButton } from "@mui/material";
+import { Box, Icon, IconButton, Slide } from "@mui/material";
 import { useStore } from "../../store";
 import shallow from "zustand/shallow";
 import CloseIcon from '@mui/icons-material/Close';
@@ -10,60 +10,62 @@ import { CardActionArea } from '@mui/material';
 import ProfileImage from "../../assets/profile.jpg";
 
 export type FriendProfileProps = {
-    onClose: () => void
+    onClose?: () => void,
+    open?: boolean,
 };
 
-export default function FriendProfile({ onClose = () => { } }: FriendProfileProps) {
+export default function FriendProfile({ open = false, onClose = () => { } }: FriendProfileProps) {
     const [activeChat] = useStore((state) => [state.activeChat], shallow);
 
     return (
-        <Box
-            position={"relative"}
-            display={"flex"}
-            flexDirection={"column"}
-            flexGrow={0}
-            height={"100%"}
-            alignSelf={"flex-end"}
-            sx={{ borderLeft: '1px solid lightgrey', backgroundColor: "#262523" }}
-        >
+        <Slide direction="up" in={open} mountOnEnter unmountOnExit>
             <Box
-                display="flex"
-                position={"absolute"}
-                right={0}
-                top={0}
-                zIndex={1000}
+                position={"relative"}
+                display={"flex"}
+                flexDirection={"column"}
+                height={"100%"}
+                width={"100%"}
+                sx={{ backgroundColor: "#262523" }}
             >
-                <IconButton
-                    size="large"
-                    color="inherit"
-                    onClick={onClose}
+                <Box
+                    display="flex"
+                    position={"absolute"}
+                    right={0}
+                    top={0}
+                    zIndex={1000}
                 >
-                    <CloseIcon />
-                </IconButton>
+                    <IconButton
+                        size="large"
+                        color="inherit"
+                        onClick={onClose}
+                    >
+                        <CloseIcon />
+                    </IconButton>
+                </Box>
+                <Box>
+                    <Card sx={{ minWidth: 300, maxWidth: 345 }}>
+                        <CardActionArea>
+                            <CardMedia
+                                component="img"
+                                height="140"
+                                image={ProfileImage}
+                                alt="Profile Image"
+                            />
+                            <CardContent>
+                                <Typography gutterBottom variant="h5" component="div">
+                                    {activeChat?.name}
+                                </Typography>
+                                <Typography gutterBottom variant="subtitle1" component="div">
+                                    {activeChat?.phone}
+                                </Typography>
+                                <Typography variant="body2" color="text.secondary">
+                                    {activeChat?.about}
+                                </Typography>
+                            </CardContent>
+                        </CardActionArea>
+                    </Card>
+                </Box>
             </Box>
-            <Box>
-                <Card sx={{ minWidth: 300, maxWidth: 345 }}>
-                    <CardActionArea>
-                        <CardMedia
-                            component="img"
-                            height="140"
-                            image={ProfileImage}
-                            alt="Profile Image"
-                        />
-                        <CardContent>
-                            <Typography gutterBottom variant="h5" component="div">
-                                {activeChat?.name}
-                            </Typography>
-                            <Typography gutterBottom variant="subtitle1" component="div">
-                                {activeChat?.phone}
-                            </Typography>
-                            <Typography variant="body2" color="text.secondary">
-                                {activeChat?.about}
-                            </Typography>
-                        </CardContent>
-                    </CardActionArea>
-                </Card>
-            </Box>
-        </Box>
+        </Slide>
     );
 }

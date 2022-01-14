@@ -29,10 +29,8 @@ export default function Chat() {
     return section === Section.chats && subSection === ChatsSubSection.chat ? (
         <Box height={"100vh"} display="flex" flexDirection="column">
             <ChatHeader onEvent={handleHeaderEvent} />
-            <Box display={"flex"} flexDirection={"row"} flexGrow={2}>
-                <Box flexGrow={3}>Chat Areaa</Box>
-                {viewProfile && <FriendProfile onClose={handleCloseProfileView} />}
-            </Box>
+            <Box flexGrow={3}>Chat Areaa</Box>
+            <FriendProfile open={viewProfile} onClose={handleCloseProfileView} />
         </Box>
     ) : null;
 }

@@ -75,9 +75,9 @@ export default function ChatHeader({ onEvent }: ChatHeaderProps) {
     }
 
     return (
-        <Box sx={{ flexGrow: 0 }}>
+        <Box sx={{ flexGrow: 0, width: '100vw' }}>
             <AppBar position="static" sx={{ backgroundColor: '#7b1fa2' }}>
-                <Toolbar sx={{ display: 'flex', alignItems: "center" }}>
+                <Toolbar sx={{ display: 'flex', alignItems: "center", width: '100vw', p: 0, mr: 1, ml: 1 }}>
                     <IconButton
                         size="large"
                         edge="start"
@@ -90,16 +90,16 @@ export default function ChatHeader({ onEvent }: ChatHeaderProps) {
                     <Icon fontSize='large' sx={{ display: 'flex', alignItems: 'center', mr: 1 }}>
                         <AccountCircle fontSize='large' />
                     </Icon>
-                    <Box display="flex" flexDirection="column" height={"100%"} flexGrow={1}>
+                    <Box display="flex" flexDirection="column" flexGrow={100}>
                         <Typography variant="body2" component="span">
                             {activeChat?.name}
                         </Typography>
                         <TypingIndicator isTyping={isTyping} />
                     </Box>
-                    <div>
+                    <Box flexGrow={1}>
                         <IconButton
                             size="large"
-                            aria-label="account of current user"
+                            aria-label="more"
                             aria-controls="menu-appbar"
                             aria-haspopup="true"
                             onClick={handleMenu}
@@ -107,25 +107,25 @@ export default function ChatHeader({ onEvent }: ChatHeaderProps) {
                         >
                             <MoreVertIcon />
                         </IconButton>
-                        <Menu
-                            id="menu-appbar"
-                            anchorEl={anchorEl}
-                            anchorOrigin={{
-                                vertical: 'top',
-                                horizontal: 'right',
-                            }}
-                            keepMounted
-                            transformOrigin={{
-                                vertical: 'top',
-                                horizontal: 'right',
-                            }}
-                            open={Boolean(anchorEl)}
-                            onClose={handleClose}
-                        >
-                            <MenuItem onClick={handleViewProfile}>View Profile</MenuItem>
-                            <MenuItem onClick={handleUnfriend}>Unfriend</MenuItem>
-                        </Menu>
-                    </div>
+                    </Box>
+                    <Menu
+                        id="menu-appbar"
+                        anchorEl={anchorEl}
+                        anchorOrigin={{
+                            vertical: 'top',
+                            horizontal: 'right',
+                        }}
+                        keepMounted
+                        transformOrigin={{
+                            vertical: 'top',
+                            horizontal: 'right',
+                        }}
+                        open={Boolean(anchorEl)}
+                        onClose={handleClose}
+                    >
+                        <MenuItem onClick={handleViewProfile}>View Profile</MenuItem>
+                        <MenuItem onClick={handleUnfriend}>Unfriend</MenuItem>
+                    </Menu>
                 </Toolbar>
             </AppBar>
         </Box>
