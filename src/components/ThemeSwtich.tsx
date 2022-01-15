@@ -2,7 +2,7 @@ import React from "react";
 import { PaletteMode } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import Switch from "@mui/material/Switch";
-import { useStore } from "../store";
+import useStore from "../store";
 import shallow from "zustand/shallow";
 
 const StyledSwitch = styled(Switch)(({ theme }) => ({

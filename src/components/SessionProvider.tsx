@@ -2,7 +2,7 @@ import React from "react";
 import shallow from "zustand/shallow";
 import { useNavigate } from "react-router-dom";
 import { useSnackbar } from "notistack";
-import { useStore } from "../store";
+import useStore from "../store";
 
 import { useLoadingOverlay } from "./LoadingOverlay";
 import { restoreSession, signIn, signOut } from "../services/auth";
@@ -16,7 +16,7 @@ function SessionProvider({ children }: any) {
 
     const navigate = useNavigate();
 
-    const [reset] = useStore((state) => [state.reset], shallow);
+    const [reset, setIsLoggedIn] = useStore((state) => [state.reset,state.setLoggedIn], shallow);
 
     const isTokenExpiring = () =>
         subMinutes(new Date(Session.accessTokenExpiry), 5) <= new Date();
@@ -70,6 +70,8 @@ function SessionProvider({ children }: any) {
 
                 navigate("/");
 
+                setIsLoggedIn(true);
+
                 loadingOverlay.hideLoadingOverlay();
             } else {
                 // Check for remember me
@@ -77,6 +79,7 @@ function SessionProvider({ children }: any) {
 
                 if (result) {
                     navigate("/");
+                    setIsLoggedIn(true);
                     return;
                 };
             }

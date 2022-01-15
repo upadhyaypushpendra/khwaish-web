@@ -14,7 +14,7 @@ import ChatsIcon from '@mui/icons-material/Forum';
 import MoreIcon from '@mui/icons-material/MoreVert';
 import AppLogo from './AppLogo';
 import shallow from 'zustand/shallow';
-import { useStore } from '../store';
+import useStore from '../store';
 import { ChatsSubSection, RequestsSubSection, Section } from '../types';
 
 

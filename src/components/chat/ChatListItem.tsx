@@ -8,7 +8,7 @@ import { useSnackbar } from "notistack";
 import { sendRequest } from "../../services/requests";
 import { ChatsSubSection, Friend } from "../../types";
 import TypingIndicator from "./TypingIndicator";
-import { useStore } from '../../store';
+import useStore from '../../store';
 import shallow from 'zustand/shallow';
 //@ts-ignore
 import Identicon from 'react-identicons';

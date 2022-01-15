@@ -2,7 +2,7 @@ import { Drawer } from "@mui/material";
 import React from "react";
 import shallow from "zustand/shallow";
 import Picker, { IEmojiData } from "emoji-picker-react";
-import { useStore } from "../store";
+import useStore from "../store";
 
 export type EmojiPickerProps = {
   onEmojiClick: (e: IEmojiData) => void;

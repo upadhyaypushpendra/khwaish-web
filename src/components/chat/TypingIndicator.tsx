@@ -1,5 +1,5 @@
 import { Typography } from "@mui/material";
-// import { useStore } from "../../store";
+// import useStore from "../../store";
 // import shallow from "zustand/shallow";
 
 export type TypingIndicatorProps = {

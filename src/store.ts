@@ -3,6 +3,7 @@ import create, { SetState, GetState } from "zustand";
 import { ChatsSubSection, Friend, Section, SubSection } from "./types";
 
 type User = {
+    id?: string;
     name?: string;
     phone?: string;
     about?: string;
@@ -26,7 +27,7 @@ type Store = {
     section: Section;
     subSection: SubSection;
     activeChat: Friend | null;
-    setPlayback: (isLoggedIn: boolean) => void;
+    setLoggedIn: (isLoggedIn: boolean) => void;
     setUser: (user: User) => void;
     toggleEmojiOpen: () => void;
     setTheme: (theme: PaletteMode) => void;
@@ -39,7 +40,7 @@ type Store = {
 const useStore = create<Store>(
     (set: SetState<Store>, get: GetState<Store>) => ({
         ...defaults,
-        setPlayback: (isLoggedIn: boolean) => set({ isLoggedIn }),
+        setLoggedIn: (isLoggedIn: boolean) => set({ isLoggedIn }),
         setUser: (user: User) => set({ user }),
         toggleEmojiOpen: () => set({ emojiOpen: !get().emojiOpen }),
         setTheme: (theme: PaletteMode) => set({ theme }),
@@ -47,9 +48,18 @@ const useStore = create<Store>(
         setSubSection: (subSection: SubSection) => set({ subSection }),
         setActiveChat: (activeChat: Friend) => set({ activeChat }),
         reset: () => {
-            set(defaults, true);
+            set({
+                ...defaults,
+                setLoggedIn: (isLoggedIn: boolean) => set({ isLoggedIn }),
+                setUser: (user: User) => set({ user }),
+                toggleEmojiOpen: () => set({ emojiOpen: !get().emojiOpen }),
+                setTheme: (theme: PaletteMode) => set({ theme }),
+                setSection: (section: Section) => set({ section }),
+                setSubSection: (subSection: SubSection) => set({ subSection }),
+                setActiveChat: (activeChat: Friend) => set({ activeChat }),
+            }, true);
         }
     })
 );
 
-export { useStore };
+export default useStore;

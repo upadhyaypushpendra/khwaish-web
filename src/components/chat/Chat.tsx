@@ -1,7 +1,7 @@
 import { Box } from "@mui/material";
 import React from "react";
 import shallow from "zustand/shallow";
-import { useStore } from "../../store";
+import useStore from "../../store";
 import { ChatsSubSection, Section, WebSocketMessageEvent } from "../../types";
 import ChatHeader, { HeaderEvent, HeaderEventType } from "./ChatHeader";
 import FriendProfile from "./FriendProfile";

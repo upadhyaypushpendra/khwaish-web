@@ -5,6 +5,12 @@ import ThemeSwitch from './ThemeSwtich';
 import TextField from '@mui/material/TextField';
 import Session from '../utils/Session';
 import PhoneNumberField from './PhoneNumberField';
+import { Button } from '@mui/material';
+import { signOut } from '../services/auth';
+import { useSnackbar } from 'notistack';
+import useStore from '../store';
+import shallow from 'zustand/shallow';
+import { useNavigate } from 'react-router-dom';
 
 const useStyles = makeStyles({
     paper: {
@@ -19,6 +25,22 @@ const useStyles = makeStyles({
 
 export default function Settings() {
     const classes = useStyles();
+    const snackbar = useSnackbar();
+    const navigate = useNavigate();
+    const [setIsLoggedIn, reset] = useStore((state) => [state.setLoggedIn, state.reset], shallow);
+
+    const handlerLogout = async () => {
+        try {
+            signOut();
+            reset();
+            setIsLoggedIn(false);
+            navigate("/signin")
+        } catch (error) {
+            snackbar.enqueueSnackbar('Oh! Unable to signout', {
+                variant: "error",
+            })
+        }
+    };
 
     return (
         <Box
@@ -64,6 +86,9 @@ export default function Settings() {
             <Box className={classes.paper}>
                 <Typography variant='h5'>Theme</Typography>
                 <ThemeSwitch />
+            </Box>
+            <Box className={classes.paper}>
+                <Button variant="outlined" onClick={handlerLogout}>Logout</Button>
             </Box>
         </Box>
     );

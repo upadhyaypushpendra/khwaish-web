@@ -6,7 +6,7 @@ import Box from '@mui/material/Box';
 import ReceivedRequests from '../lists/ReceivedRequests';
 import SentRequests from '../lists/SentRequests';
 import { RequestsSubSection, Section, SubSection } from '../types';
-import { useStore } from '../store';
+import useStore from '../store';
 import shallow from 'zustand/shallow';
 
 interface TabPanelProps {

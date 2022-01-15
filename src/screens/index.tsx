@@ -12,14 +12,15 @@ import ForgotPassword from "./ForgotPassword";
 import Signup from "./Signup";
 import SessionProvider from "../components/SessionProvider";
 import Session from "../utils/Session";
-import { useStore } from "../store";
+import useStore from "../store";
 import shallow from "zustand/shallow";
 import { ChatsSubSection, FndSubSection, ProfileSubSection, RequestsSubSection, Section, SubSection } from "../types";
 
 const Screens = () => {
     const navigate = useNavigate();
     const [theme] = useStore((state) => [state.theme], shallow);
-    const [setSection, setSubSection] = useStore((state) => [state.setSection, state.setSubSection], shallow);
+    const [setSection, setSubSection, setLoggedIn, setUser] =
+        useStore((state) => [state.setSection, state.setSubSection, state.setLoggedIn, state.setUser], shallow);
 
     // Update the theme only if the theme changes
     const muiTheme = React.useMemo(() => createTheme(getThemeDesign(theme)), [theme]);
@@ -36,8 +37,11 @@ const Screens = () => {
     React.useEffect(() => {
         if (!Session.isLoggedIn()) {
             navigate("/signin");
+        } else {
+            // setLoggedIn(true);
+            // setUser({ id: Session.userId, name: Session.name, phone: Session.phone, about: Session.about, });
         }
-    }, []);
+    }, [Session.userId]);
 
     /**
     * Effect to store the section into session storage

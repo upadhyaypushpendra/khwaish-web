@@ -10,7 +10,7 @@ import MoreVertIcon from '@mui/icons-material/MoreVert';
 import FormGroup from '@mui/material/FormGroup';
 import MenuItem from '@mui/material/MenuItem';
 import Menu from '@mui/material/Menu';
-import { useStore } from '../../store';
+import useStore from '../../store';
 import shallow from 'zustand/shallow';
 import { Icon } from '@mui/material';
 import TypingIndicator from './TypingIndicator';

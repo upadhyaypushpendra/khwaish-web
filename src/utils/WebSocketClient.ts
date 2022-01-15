@@ -4,11 +4,10 @@ import Session from "./Session";
 
 class WebsocketClient {
     webSocketServerUrl = process.env.REACT_APP_WEBSOCKET_SERVER_URL as string;
-    client: W3CWebSocket = new W3CWebSocket(this.webSocketServerUrl, 'echo-protocol');
+    client: W3CWebSocket | null = null;
     retryLeft = 3;
     messageListeners: any[] = [];
     constructor() {
-        this.connect();
         this.messageListeners = [{ event: WebSocketMessageEvent.connected, listener: this.connectionEventHandler }];
     }
 
@@ -32,15 +31,15 @@ class WebsocketClient {
     }
 
     connectFailedHandler = (error: any) => {
-        // console.log('Connect Error: ' + error.toString());
+        console.log('Connect Error: ' + error.toString());
     }
 
     errorHandler = (error: any) => {
-        // console.log('DEBUG::WebsocketClient->errorHandler ', error);
+        console.log('DEBUG::WebsocketClient->errorHandler ', error);
     }
 
     connectHandler = () => {
-        // console.log('DEBUG::WebsocketClient->connectHandler WebSocket Client Connected.');
+        console.log('DEBUG::WebsocketClient->connectHandler WebSocket Client Connected.');
         this.retryLeft = 3;
     }
 
@@ -57,7 +56,7 @@ class WebsocketClient {
 
     retryConnection = () => {
         console.error('DEBUG::WebsocketClient->retryConnection:', new Date().getSeconds());
-        if (this.client.readyState === this.client.OPEN) return;
+        if (this.client?.readyState === this.client?.OPEN) return;
 
         if (this.retryLeft > 0) {
             this.retryLeft = this.retryLeft - 1;
@@ -73,9 +72,9 @@ class WebsocketClient {
     }
 
     sendMessage = (data: any) => {
-        if (this.client.readyState === this.client.OPEN) {
+        if (this.client?.readyState === this.client?.OPEN) {
             // console.log('DEBUG::WebsocketClient->sendMessage: sending message: ', data);
-            this.client.send(JSON.stringify(data));
+            this.client?.send(JSON.stringify(data));
             return true;
         } else {
             console.error('DEBUG::WebsocketClient->sendMessage: Unable to send message.');
@@ -84,7 +83,7 @@ class WebsocketClient {
     }
 
     closeConnection = () => {
-        this.client.close();
+        this.client?.close();
     }
 
     connect = () => {

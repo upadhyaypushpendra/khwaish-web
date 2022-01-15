@@ -1,6 +1,6 @@
 import List from '@mui/material/List';
 import shallow from 'zustand/shallow';
-import { useStore } from '../../store';
+import useStore from '../../store';
 import { ChatsSubSection, Section } from '../../types';
 import Session from '../../utils/Session';
 import ChatListItem from './ChatListItem';

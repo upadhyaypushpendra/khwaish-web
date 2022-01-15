@@ -16,7 +16,6 @@ import { useLoadingOverlay } from "../components/LoadingOverlay";
 import Session from "../utils/Session";
 import AppLogo from "../components/AppLogo";
 import { validateAndParsePhone } from "../utils/phone";
-import HtmlTooltip from "../components/HtmlTooltop";
 
 const SignIn = (props: any) => {
     const snackbar = useSnackbar();
@@ -108,7 +107,7 @@ const SignIn = (props: any) => {
                         sx={{ mt: 3, mb: 2 }}
                     >
                         Login
-          </Button>
+                    </Button>
                     <Grid container>
                         <Grid item xs>
                             <Link to="/reset-password">Reset password?</Link>

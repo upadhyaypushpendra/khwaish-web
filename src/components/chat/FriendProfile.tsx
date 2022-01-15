@@ -1,5 +1,5 @@
 import { Box, Dialog, DialogContent, DialogTitle, Icon, IconButton, Slide } from "@mui/material";
-import { useStore } from "../../store";
+import useStore from "../../store";
 import shallow from "zustand/shallow";
 import CloseIcon from '@mui/icons-material/Close';
 import Card from '@mui/material/Card';

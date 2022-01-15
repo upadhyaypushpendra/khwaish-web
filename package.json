@@ -25,7 +25,7 @@
     "react-router-dom": "6.2.1",
     "react-scripts": "5.0.0",
     "websocket": "1.0.34",
-    "zustand": "3.6.8"
+    "zustand": "3.6.9"
   },
   "devDependencies": {
     "@types/crypto-js": "^4.0.2",
