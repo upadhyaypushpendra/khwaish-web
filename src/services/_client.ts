@@ -36,7 +36,7 @@ class Client {
       headers: {
         "Content-Type": "application/json",
         userId: Session.userId,
-        "kutuki-application": "web",
+        "khwaish-application": "web",
         "khwaish-access-token": Session.accessToken,
         "khwaish-refresh-token": localStorage.getItem("khwaishRefreshToken"),
       }
