@@ -16,11 +16,11 @@ const ForgotPassword = () => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
     // eslint-disable-next-line no-console
-    // console.log({
+    /* console.log({
       currentPassword: data.get("currentPassword"),
       password: data.get("password"),
       confirmPassword: data.get("confirmPassword")
-    });
+    }); */
   };
 
   return (
