@@ -14,7 +14,7 @@ const getUsers = async (input: string) => {
 };
 
 const deleteFriend = async (friendId: string | undefined) => {
-    console.log('DEBUG::deleteFriend', friendId);
+    // console.log('DEBUG::deleteFriend', friendId);
     if (!Boolean(friendId)) throw new Error('No friend to delete.');
 
     const result = await new Client({

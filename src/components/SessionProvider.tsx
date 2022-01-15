@@ -39,7 +39,7 @@ function SessionProvider({ children }: any) {
                 return true;
             }
         } catch (error) {
-            console.log('DEBUG::checkRemembered: failed', error);
+            // console.log('DEBUG::checkRemembered: failed', error);
             return false;
         }
     };
@@ -81,7 +81,7 @@ function SessionProvider({ children }: any) {
                 };
             }
         } catch (e) {
-            console.log('DEBUG::onLoad error: ', e);
+            // console.log('DEBUG::onLoad error: ', e);
             snackbar.enqueueSnackbar("Uh Oh! You need to sign.", {
                 variant: "warning",
                 onExited: goToSignIn

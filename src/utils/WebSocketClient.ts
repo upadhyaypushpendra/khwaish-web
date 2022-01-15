@@ -1,89 +1,98 @@
-import { ICloseEvent, IMessageEvent, w3cwebsocket as WebSocketClient } from 'websocket';
-import { WebSocketMessageData, WebSocketMessageEvent } from '../types';
-import Session from './Session';
+import { w3cwebsocket as W3CWebSocket } from "websocket";
+import { WebSocketMessageEvent } from "../types";
+import Session from "./Session";
 
 class WebsocketClient {
-    client: WebSocketClient | null = null;
+    webSocketServerUrl = process.env.REACT_APP_WEBSOCKET_SERVER_URL as string;
+    client: W3CWebSocket = new W3CWebSocket(this.webSocketServerUrl, 'echo-protocol');
+    retryLeft = 3;
+    messageListeners: any[] = [];
     constructor() {
-        this.client = null;
+        this.connect();
+        this.messageListeners = [{ event: WebSocketMessageEvent.connected, listener: this.connectionEventHandler }];
     }
 
-    connectFailedHandler(error: Error) {
-        console.log('Connect Error: ' + error.toString());
-    }
-
-    errorHandler(error: Error) {
-        console.log('DEBUG::WebsocketClient->errorHandler ', error);
-    }
-
-    connectHandler() {
-        console.log('DEBUG::WebsocketClient->connectHandler WebSocket Client Connected.');
-        this.client?.send('Hello dudue whats the issue ');
-    }
-
-    messageHanlder(message: IMessageEvent) {
-        console.log('DEBUG::WebsocketClient->messageHanlder: Message: ', message.data);
-        if (typeof message.data === 'string') {
-            const messageData = JSON.parse(message.data) as WebSocketMessageData;
-            console.log('DEBUG::WebsocketClient->messageHanlder: MessageData: ', messageData);
-
-            switch (messageData.event) {
-                case "connected": {
-                    console.log('DEBUG::WebsocketClient->messageHanlder: connected');
-                    this.sendMessage({
-                        status: 'ok',
-                        event: WebSocketMessageEvent.verify,
-                        data: {
-                            tempID: messageData.data.tempID,
-                            token: Session.accessToken,
-                        }
-                    });
-                    break;
+    connectionEventHandler = ({ tempId }: any) => {
+        const intervalId = setInterval(() => {
+            if (this.sendMessage({
+                event: WebSocketMessageEvent.verify,
+                data: {
+                    tempId: tempId,
+                    token: Session.accessToken,
                 }
-                default:
-                    console.log('DEBUG::WebsocketClient->messageHanlder: default');
-                    break;
+            }) || this.retryLeft < 0) {
+                clearInterval(intervalId);
+            }
+            this.retryLeft = this.retryLeft - 1;
+        }, 1000)
+    };
+
+    addMessageListener = (event: WebSocketMessageEvent, listener: (data: any) => void) => {
+        this.messageListeners.push({ event, listener });
+    }
+
+    connectFailedHandler = (error: any) => {
+        // console.log('Connect Error: ' + error.toString());
+    }
+
+    errorHandler = (error: any) => {
+        // console.log('DEBUG::WebsocketClient->errorHandler ', error);
+    }
+
+    connectHandler = () => {
+        // console.log('DEBUG::WebsocketClient->connectHandler WebSocket Client Connected.');
+        this.retryLeft = 3;
+    }
+
+    messageHanlder = (message: any) => {
+        // console.log('DEBUG::WebsocketClient->messageHanlder: Message: ', message.data);
+        if (typeof message.data === 'string') {
+            const messageData = JSON.parse(message.data);
+            // console.log('DEBUG::WebsocketClient->messageHanlder: MessageData: ', messageData);
+            for (const messageListener of this.messageListeners) {
+                if (messageListener.event === messageData.event) messageListener.listener(messageData.data);
             }
         }
     }
 
-    retryConnection() {
-        console.error('DEBUG::WebsocketClient->retryConnection:');
-        if (this.client?.readyState !== this.client?.OPEN) {
-            this.client = null;
+    retryConnection = () => {
+        console.error('DEBUG::WebsocketClient->retryConnection:', new Date().getSeconds());
+        if (this.client.readyState === this.client.OPEN) return;
+
+        if (this.retryLeft > 0) {
+            this.retryLeft = this.retryLeft - 1;
             this.connect();
-            setTimeout(() => this.retryConnection(), 5000);
+            setTimeout(() => this.retryConnection(), 5000 * this.retryLeft);
         }
     }
-    connectionCloseHandler(event: ICloseEvent) {
+
+    connectionCloseHandler = (event: any) => {
         console.error('DEBUG::WebsocketClient->connectionCloseHandler: Connection closed.', event);
         // Retry connecting
         this.retryConnection();
     }
 
-    sendMessage(data: WebSocketMessageData) {
-        if (this.client?.readyState === this.client?.OPEN) {
-            console.error('DEBUG::WebsocketClient->sendMessage: sending message: ', data);
-            this.client?.send(JSON.stringify(data));
+    sendMessage = (data: any) => {
+        if (this.client.readyState === this.client.OPEN) {
+            // console.log('DEBUG::WebsocketClient->sendMessage: sending message: ', data);
+            this.client.send(JSON.stringify(data));
+            return true;
         } else {
             console.error('DEBUG::WebsocketClient->sendMessage: Unable to send message.');
+            return false;
         }
     }
 
-    closeConnection() {
-        this.client?.close();
-        this.client = null;
+    closeConnection = () => {
+        this.client.close();
     }
 
-    connect() {
-        console.log('DEBUG::WebsocketClient->connect: begin');
-        if (this.client) return;
-        if (process.env.REACT_APP_WEBSOCKET_SERVER_URL) {
-            console.log('DEBUG::WebsocketClient->connect: Connecting to websocket');
-            this.client = new WebSocketClient(
-                process.env.REACT_APP_WEBSOCKET_SERVER_URL,
-                'echo-protocol'
-            );
+    connect = () => {
+        // console.log('DEBUG::WebsocketClient->connect: begin');
+
+        if (this.webSocketServerUrl) {
+            // console.log('DEBUG::WebsocketClient->connect: Connecting to websocket');
+            this.client = new W3CWebSocket(this.webSocketServerUrl, 'echo-protocol');
             this.client.onerror = this.connectFailedHandler;
             this.client.onopen = this.connectHandler;
             this.client.onmessage = this.messageHanlder;

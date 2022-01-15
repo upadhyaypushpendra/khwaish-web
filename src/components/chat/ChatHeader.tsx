@@ -19,6 +19,8 @@ import { deleteFriend } from '../../services/users';
 import { useSnackbar } from 'notistack';
 import { restoreSession } from '../../services/auth';
 import { useLoadingOverlay } from "../LoadingOverlay";
+//@ts-ignore
+import Identicon from 'react-identicons';
 
 export enum HeaderEventType {
     view_profile_click,
@@ -54,14 +56,14 @@ export default function ChatHeader({ onEvent }: ChatHeaderProps) {
     const handleBack = () => setSubSection(ChatsSubSection.list);
 
     const handleUnfriend = async () => {
-        console.log('DEBUG::handleUnfriend');
+        // console.log('DEBUG::handleUnfriend');
         showLoadingOverlay(`Removing ${activeChat?.name}...`);
         try {
             await deleteFriend(activeChat?._id);
             await restoreSession();
             handleBack();
         } catch (error) {
-            console.log('DEBUG::handleDecline', error);
+            // console.log('DEBUG::handleDecline', error);
             snackbar.enqueueSnackbar(`Sorry!! Unable to unfriend ${activeChat?.name}`, { variant: "error" });
         } finally {
             handleClose();
@@ -87,8 +89,8 @@ export default function ChatHeader({ onEvent }: ChatHeaderProps) {
                     >
                         <BackIcon />
                     </IconButton>
-                    <Icon fontSize='large' sx={{ display: 'flex', alignItems: 'center', mr: 1 }}>
-                        <AccountCircle fontSize='large' />
+                    <Icon fontSize='large' sx={{ display: 'flex', alignItems: 'center', mr: 1, borderRadius: '50%' }}>
+                        <Identicon size={32} string={activeChat?._id} />
                     </Icon>
                     <Box display="flex" flexDirection="column" flexGrow={100}>
                         <Typography variant="body2" component="span">

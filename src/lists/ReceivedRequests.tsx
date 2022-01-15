@@ -24,23 +24,23 @@ export default function ReceivedRequests() {
     const [receivedRequests, setReceivedRequests] = React.useState([]);
 
     const handleAccept = async (id: string) => {
-        console.log('DEBUG::handleAccept ', id);
+        // console.log('DEBUG::handleAccept ', id);
         try {
             await acceptRequest(id);
             loadRecievedRequests();
         } catch (error) {
-            console.log('DEBUG::handleAccept', error);
+            // console.log('DEBUG::handleAccept', error);
             snackbar.enqueueSnackbar("Sorry!! Unable to accept this request.", { variant: "error" });
         }
     };
 
     const handleDecline = async (id: string) => {
-        console.log('DEBUG::handleDecline ', id);
+        // console.log('DEBUG::handleDecline ', id);
         try {
             await declineRequest(id);
             loadRecievedRequests();
         } catch (error) {
-            console.log('DEBUG::handleDecline', error);
+            // console.log('DEBUG::handleDecline', error);
             snackbar.enqueueSnackbar("Sorry!! Unable to decline the request.", { variant: "error" });
         }
     };
@@ -52,7 +52,7 @@ export default function ReceivedRequests() {
                     const { requests } = await getReceivedRequests();
                     setReceivedRequests(requests);
                 } catch (error) {
-                    console.log('DEBUG::loadRecievedRequests', error);
+                    // console.log('DEBUG::loadRecievedRequests', error);
                     snackbar.enqueueSnackbar("Sorry!! Unable to load the received requests!", { variant: "error" });
                 }
             })();

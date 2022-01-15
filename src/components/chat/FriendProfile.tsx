@@ -1,4 +1,4 @@
-import { Box, Icon, IconButton, Slide } from "@mui/material";
+import { Box, Dialog, DialogContent, DialogTitle, Icon, IconButton, Slide } from "@mui/material";
 import { useStore } from "../../store";
 import shallow from "zustand/shallow";
 import CloseIcon from '@mui/icons-material/Close';
@@ -18,32 +18,34 @@ export default function FriendProfile({ open = false, onClose = () => { } }: Fri
     const [activeChat] = useStore((state) => [state.activeChat], shallow);
 
     return (
-        <Slide direction="up" in={open} mountOnEnter unmountOnExit>
-            <Box
-                position={"relative"}
-                display={"flex"}
-                flexDirection={"column"}
-                height={"100%"}
-                width={"100%"}
-                sx={{ backgroundColor: "#262523" }}
-            >
+        <Dialog onClose={onClose} open={open} sx={{ p: 0, m: 0 }}>
+            <DialogContent sx={{ p: 0, m: 0 }}>
                 <Box
-                    display="flex"
-                    position={"absolute"}
-                    right={0}
-                    top={0}
-                    zIndex={1000}
+                    position={"relative"}
+                    display={"flex"}
+                    flexDirection={"column"}
+                    height={"100%"}
+                    width={"100%"}
+                    sx={{ backgroundColor: "#262523" }}
                 >
-                    <IconButton
-                        size="large"
-                        color="inherit"
-                        onClick={onClose}
+                    <Box
+                        display="flex"
+                        position={"absolute"}
+                        right={0}
+                        top={0}
+                        zIndex={1000}
                     >
-                        <CloseIcon />
-                    </IconButton>
+                        <IconButton
+                            size="large"
+                            color="inherit"
+                            onClick={onClose}
+                        >
+                            <CloseIcon />
+                        </IconButton>
+                    </Box>
                 </Box>
                 <Box>
-                    <Card sx={{ minWidth: 300, maxWidth: 345 }}>
+                    <Card sx={{ minWidth: 300, maxWidth: 345, minHeight: "80vh", m: 0 }}>
                         <CardActionArea>
                             <CardMedia
                                 component="img"
@@ -65,7 +67,7 @@ export default function FriendProfile({ open = false, onClose = () => { } }: Fri
                         </CardActionArea>
                     </Card>
                 </Box>
-            </Box>
-        </Slide>
+            </DialogContent>
+        </Dialog >
     );
 }

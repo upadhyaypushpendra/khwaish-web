@@ -24,12 +24,12 @@ export default function SentRequests() {
     const [sentRequests, setSentRequests] = React.useState([]);
 
     const handleDecline = async (id: string) => {
-        console.log('DEBUG::handleDecline ', id);
+        // console.log('DEBUG::handleDecline ', id);
         try {
             await declineRequest(id);
             loadSentRequests();
         } catch (error) {
-            console.log('DEBUG::handleDelete', error);
+            // console.log('DEBUG::handleDelete', error);
             snackbar.enqueueSnackbar("Sorry!! Unable to decline the request.", { variant: "error" });
         }
     };
@@ -41,7 +41,7 @@ export default function SentRequests() {
                     const { requests } = await getSentRequests();
                     setSentRequests(requests);
                 } catch (error) {
-                    console.log('DEBUG::loadSentRequests', error);
+                    // console.log('DEBUG::loadSentRequests', error);
                     snackbar.enqueueSnackbar("Sorry!! Unable to load the sent requests!", { variant: "error" });
                 }
             })();

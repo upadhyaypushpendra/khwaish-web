@@ -64,14 +64,14 @@ export default function FindFriends(props: any) {
     const fetchUsersTimeout = React.useRef<NodeJS.Timeout | null>(null);
 
     const handleSendRequest = async (id: string) => {
-        console.log('DEBUG::handleSendRequest ', id);
+        // console.log('DEBUG::handleSendRequest ', id);
         try {
             const { message } = await sendRequest(id);
             snackbar.enqueueSnackbar(message || "Request Sent!!", {
                 variant: "success",
             });
         } catch (error) {
-            console.log('DEBUG::handleInputChange -> Error', error);
+            // console.log('DEBUG::handleInputChange -> Error', error);
             snackbar.enqueueSnackbar("Sorry unable to Send Request", {
                 variant: "error",
             });
@@ -79,7 +79,7 @@ export default function FindFriends(props: any) {
     };
 
     const handleInputChange = async (e: any) => {
-        console.log('DEBUG::handleInputChange ', e.target.value);
+        // console.log('DEBUG::handleInputChange ', e.target.value);
 
         setInput(e.target.value);
 
@@ -93,7 +93,7 @@ export default function FindFriends(props: any) {
                     const { users } = await getUsers(input);
                     setResult(users);
                 } catch (error) {
-                    console.log('DEBUG::handleInputChange -> Error', error);
+                    // console.log('DEBUG::handleInputChange -> Error', error);
                     setResult([]);
                 }
             } else {
