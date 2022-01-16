@@ -7,6 +7,7 @@ const getPalette = (mode: PaletteMode = "light") => {
         primary: {
             dark: '#8e24aa',
             main: '#7b1fa2',
+            light: "#9a4abd"
         },
         secondary: {
             light: "#bdbdbd",

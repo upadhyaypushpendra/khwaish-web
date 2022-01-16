@@ -11,13 +11,15 @@ import Menu from '@mui/material/Menu';
 import useStore from '../../store';
 import shallow from 'zustand/shallow';
 import TypingIndicator from './TypingIndicator';
-import { ChatsSubSection } from '../../types';
+import { ChatsSubSection, WebSocketMessageEvent } from '../../types';
 import { deleteFriend } from '../../services/users';
 import { useSnackbar } from 'notistack';
 import { restoreSession } from '../../services/auth';
 import { useLoadingOverlay } from "../LoadingOverlay";
 //@ts-ignore
 import ProfileIcon from '../ProfileIcon';
+import WebSocketClient from '../../utils/WebSocketClient';
+import Session from '../../utils/Session';
 
 export enum HeaderEventType {
     view_profile_click,
@@ -40,7 +42,7 @@ export default function ChatHeader({ onEvent }: ChatHeaderProps) {
 
     const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
 
-    const [isTyping, setIsTyping] = React.useState(true);
+    const [isTyping, setIsTyping] = React.useState(false);
 
     const handleMenu = (event: React.MouseEvent<HTMLElement>) => {
         setAnchorEl(event.currentTarget);
@@ -73,8 +75,20 @@ export default function ChatHeader({ onEvent }: ChatHeaderProps) {
         handleClose();
     }
 
+    const typingEventHandler = React.useCallback(async (data: any) => {
+        if (data.to === Session.userId && data.from === activeChat?._id) {
+            setIsTyping(data.isTyping);
+        }
+    }, [activeChat?._id, Session.userId]);
+
+    React.useEffect(() => {
+        const id = WebSocketClient.addMessageListener(WebSocketMessageEvent.typing, typingEventHandler);
+
+        return () => WebSocketClient.removeMessageListener(id);
+    }, [isTyping, typingEventHandler]);
+
     return (
-        <AppBar position="static" sx={{ backgroundColor: '#7b1fa2', flexGrow: 0, width: '100vw' }}>
+        <AppBar position="fixed" sx={{ backgroundColor: '#7b1fa2', flexGrow: 0, width: '100vw' }}>
             <Toolbar sx={{ display: 'flex', alignItems: "center", width: '100vw', p: 0, mr: 1, ml: 1 }}>
                 <IconButton
                     size="large"
@@ -90,7 +104,9 @@ export default function ChatHeader({ onEvent }: ChatHeaderProps) {
                     <Typography variant="body2" component="span">
                         {activeChat?.name}
                     </Typography>
-                    <TypingIndicator isTyping={isTyping} />
+                    <Box>
+                        <TypingIndicator isTyping={isTyping} />
+                    </Box>
                 </Box>
                 <Box flexGrow={1}>
                     <IconButton

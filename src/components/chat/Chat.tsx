@@ -1,27 +1,22 @@
-import { Box } from "@mui/material";
 import React from "react";
+import Box from "@mui/material/Box";
 import shallow from "zustand/shallow";
 import useStore from "../../store";
 import { ChatsSubSection, Section, WebSocketMessageEvent } from "../../types";
 import ChatHeader, { HeaderEvent, HeaderEventType } from "./ChatHeader";
 import FriendProfile from "./FriendProfile";
-import {
-    ActionResponse,
-    ChatController,
-    MuiChat,
-} from 'chat-ui-react';
 import WebSocketClient from "../../utils/WebSocketClient";
 import Session from "../../utils/Session";
+import ChatController, { ChatMessage } from "../../utils/ChatController";
+import ReplyContainer from "./ReplyContainer";
+import MessagesContainer from "./MessagesContainer";
 
 export default function Chat() {
     const [section, subSection] = useStore((state) => [state.section, state.subSection], shallow);
     const [activeChat] = useStore((state) => [state.activeChat], shallow);
     const [viewProfile, setViewProfile] = React.useState(false);
-    const [chatController] = React.useState(
-        new ChatController({
-            showDateTime: true,
-        }),
-    );
+    const [chatController, setChatController] = React.useState<ChatController | null>(null);
+    const [messages, setMessages] = React.useState<ChatMessage[]>([]);
 
 
     const handleHeaderEvent = async (event: HeaderEvent) => {
@@ -37,46 +32,71 @@ export default function Chat() {
         }
     }
 
-    const handleSendMessage = React.useCallback(async ({ type, value, error }: ActionResponse) => {
+    const handleSendMessage = React.useCallback((type = 'text', content: string) => {
         // Send message to server
-        // console.log('DEBUG::activeChat', activeChat);
-        WebSocketClient.sendMessage({
-            event: 'send_message',
-            data: {
-                to: activeChat?._id,
-                from: Session.userId,
-                message: {
-                    type,
-                    value
-                },
-            }
-        })
-    }, [activeChat?._id]);
-
-    const onMessageReceived = React.useCallback(async ({ to, from, message }: any) => {
-        // Send message to server
-        await chatController.addMessage({
-            type: message.type,
-            content: message.value,
-            self: false,
+        chatController?.sendMessage({
+            type: 'text',
+            content,
         });
-    }, [chatController]);
+        //@ts-ignore
+        setMessages([...(chatController?.messages)]);
+    }, [activeChat?._id, chatController, Session.userId]);
 
-    React.useMemo(async () => {
-        chatController.setActionRequest({ type: 'text', always: true }, handleSendMessage);
-    }, [chatController]);
+    const onMessageReceived = React.useCallback(async (message: ChatMessage) => {
+        // Send message to server
+        if (message.to === Session.userId && message.from === activeChat?._id && chatController) {
+            chatController.addMessage({
+                type: message.type,
+                content: message.content,
+                self: false,
+                from: message.from,
+                to: message.to,
+                sentTime: message.sentTime,
+            });
+            setMessages([...(chatController?.messages)]);
+        }
+    }, [chatController?.messages.length, activeChat?._id, messages.length]);
 
     React.useEffect(() => {
-        WebSocketClient.addMessageListener(WebSocketMessageEvent.message_received, onMessageReceived);
-    }, []);
+        const id = WebSocketClient.addMessageListener(WebSocketMessageEvent.message_received, onMessageReceived);
+
+        return () => WebSocketClient.removeMessageListener(id);
+    }, [activeChat?._id, onMessageReceived]);
+
+    React.useEffect(() => {
+        if (activeChat?._id) {
+            setChatController(new ChatController({
+                messages: [],
+                receiverId: activeChat?._id,
+                senderId: Session.userId,
+            }));
+        }
+    }, [activeChat?._id, Session.userId]);
 
     const handleCloseProfileView = () => setViewProfile(false);
 
     return section === Section.chats && subSection === ChatsSubSection.chat ? (
         <Box maxHeight={"100vh"} display="flex" flexDirection="column" position={"relative"}>
             <ChatHeader onEvent={handleHeaderEvent} />
-            <Box flexGrow={3} sx={{ maxWidth: '100vw', maxHeight: '100vh - 60px', flex: '1 1 0%', backgroundColor: "blue", border: "1px solid green" }}>
-                {activeChat?._id && <MuiChat chatController={chatController} />}
+            <Box
+                display="flex"
+                flexDirection="column"
+                flexGrow={3}
+                sx={{
+                    maxWidth: '100vw',
+                    height: '100vh',
+                    border: "1px solid green",
+                }}
+            >
+                <MessagesContainer messages={messages} />
+                <Box justifySelf="flex-end" flexGrow={0}>
+                    <ReplyContainer
+                        onSave={handleSendMessage}
+                        placeholder="Type your message here..."
+                        userId={Session.userId}
+                        friendId={activeChat?._id as string}
+                    />
+                </Box>
             </Box>
             <FriendProfile open={viewProfile} onClose={handleCloseProfileView} />
         </Box >

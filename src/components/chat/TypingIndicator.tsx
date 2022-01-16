@@ -9,11 +9,11 @@ export type TypingIndicatorProps = {
 export default function TypingIndicator({ isTyping }: TypingIndicatorProps) {
     // const [theme] = useStore((state) => [state.theme], shallow);
 
-    return isTyping ? (
-        <Typography component="span" variant="caption" sx={{ color: "#67a716"}}>
+    return (
+        <Typography component="span" variant="caption" sx={{ color: isTyping ? "#67a716" : "transparent" }}>
             typing...
         </Typography>
-    ) : null;
+    );
 }
 
 // theme === 'light' ? "#8e24aa" : "#7b1fa2" 

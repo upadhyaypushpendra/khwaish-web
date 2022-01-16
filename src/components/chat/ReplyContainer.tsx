@@ -4,7 +4,8 @@ import Paper from "@mui/material/Paper";
 import InputBase from "@mui/material/InputBase";
 import Divider from "@mui/material/Divider";
 import Button from "@mui/material/Button";
-import Typography from "@mui/material/Typography";
+import WebSocketClient from "../../utils/WebSocketClient";
+import { WebSocketMessageEvent } from "../../types";
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -40,18 +41,31 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 type ReplyContainerProps = {
-    onSave: (message: any) => void,
+    onSave: (type: string, content: any) => void,
     placeholder: string;
+    userId: string,
+    friendId: string,
 };
 
-export default function ReplyContainer({ onSave, placeholder }: ReplyContainerProps) {
+export default function ReplyContainer({ onSave, placeholder, userId, friendId }: ReplyContainerProps) {
     const classes = useStyles();
 
     const [message, setMessage] = React.useState("");
 
     const [buttonLoading, setButtonLoading] = React.useState(false);
 
-    const handleChange = (e: any) => setMessage(e.target.value);
+    const [isTyping, setIsTyping] = React.useState(false);
+
+    const typingCheckTimeoutRef = React.useRef<any>(0);
+
+    const handleChange = (e: any) => {
+        if (typingCheckTimeoutRef.current) {
+            clearTimeout(typingCheckTimeoutRef.current);
+        }
+        typingCheckTimeoutRef.current = setTimeout(() => setIsTyping(false), 1000);
+        if (!isTyping) setIsTyping(true);
+        setMessage(e.target.value);
+    }
 
     async function handleSubmit(e: any) {
         e.preventDefault();
@@ -61,7 +75,7 @@ export default function ReplyContainer({ onSave, placeholder }: ReplyContainerPr
         setButtonLoading(true);
 
         try {
-            await onSave(message);
+            onSave('text', message);
             setMessage("");
         } catch (e) {
             throw e;
@@ -70,8 +84,18 @@ export default function ReplyContainer({ onSave, placeholder }: ReplyContainerPr
         setButtonLoading(false);
     }
 
-    const handleKeyDown = async (e: any) =>
-        e.ctrlKey && e.keyCode === 13 && message && handleSubmit(e);
+    const handleKeyDown = async (e: any) => e.keyCode === 13 && message && handleSubmit(e);
+
+    React.useEffect(() => {
+        WebSocketClient.sendMessage({
+            event: WebSocketMessageEvent.typing,
+            data: {
+                from: userId,
+                to: friendId,
+                isTyping,
+            }
+        })
+    }, [isTyping]);
 
     return (
         <Paper
@@ -114,9 +138,6 @@ export default function ReplyContainer({ onSave, placeholder }: ReplyContainerPr
                 >
                     SEND
                 </Button>
-                <Typography variant="caption" style={{ opacity: 0.5 }}>
-                    Ctrl + Enter
-                </Typography>
             </Paper>
         </Paper>
     );

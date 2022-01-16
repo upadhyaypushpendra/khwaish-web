@@ -1,8 +1,11 @@
 import Linkify from "react-linkify";
+import dayjs from 'dayjs';
 import { Typography } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import DoneAllRoundedIcon from '@mui/icons-material/DoneAllRounded';
 import DoneRoundedIcon from '@mui/icons-material/DoneRounded';
+import Box from "@mui/material/Box";
+import { ChatMessage } from "../../utils/ChatController";
 
 const useStyles = makeStyles((theme) => ({
     selfMessageWrapper: {
@@ -12,10 +15,10 @@ const useStyles = makeStyles((theme) => ({
             maxWidth: "65%",
             width: "fit-content",
             borderRadius: "16px 0 16px 16px",
-            backgroundColor: "#6161610a",
-            border: "solid 1px #00000024",
+            border: "solid 1px transparent",
             padding: 8,
             marginLeft: "auto",
+            boxShadow: "-3px 3px 5px 0px #9a49bd8c",
         },
     },
     messageWrapper: {
@@ -25,10 +28,10 @@ const useStyles = makeStyles((theme) => ({
             maxWidth: "65%",
             width: "fit-content",
             borderRadius: "0 16px 16px 16px",
-            border: "solid 1px transparent",
-            backgroundColor: "#86DACD",
+            border: "solid 1px #00000005",
             padding: 8,
             marginRight: "auto",
+            boxShadow: "3px 3px 5px 0px #00000024",
         },
     },
     message: {
@@ -37,47 +40,81 @@ const useStyles = makeStyles((theme) => ({
         wordBreak: "break-word",
     },
     dateSent: {
-        fontSize: "85%",
-        letterSpacing: "0.5px",
+        textAlign: "right",
         marginTop: "4px",
         display: "flex",
         alignItems: "center",
         justifyContent: "flex-end",
+        width: "100%",
     },
 }));
 
-type MessageProps = {
-    body: string,
-    unread: boolean,
-    isSelf: boolean,
-    dateSent: string,
-};
 
-export default function Message({ body, unread, isSelf, dateSent }: MessageProps) {
+function MessageStatus(message: ChatMessage) {
     const classes = useStyles();
 
     return (
-        <div
-            className={isSelf ? classes.selfMessageWrapper : classes.messageWrapper}
+        <Box
+            className={classes.dateSent}
+            minWidth={'60px'}
         >
-            <div>
-                <div className={classes.message}>
-                    <Typography>
+            <Typography
+                component={"span"}
+                variant="caption"
+            >
+                {dayjs(message.sentTime as string).format('hh:mm a')}
+            </Typography>
+            {message.self &&
+                (
+                    message.read
+                        ?
+                        (<DoneAllRoundedIcon fontSize="small" color={"success"} />)
+                        :
+                        message.delivered
+                            ?
+                            (<DoneAllRoundedIcon fontSize="small" color={"disabled"} />)
+                            :
+                            (<DoneRoundedIcon fontSize="small" color={"disabled"} />)
+                )
+            }
+
+        </Box>
+    );
+};
+
+type MessageProps = {
+    message: ChatMessage;
+};
+
+export default function Message({ message }: MessageProps) {
+    const classes = useStyles();
+
+    return (
+        <Box
+            justifySelf={message.self ? 'flex-end' : 'flex-start'}
+            alignSelf={message.self ? 'flex-end' : 'flex-start'}
+            className={message.self ? classes.selfMessageWrapper : classes.messageWrapper}
+            maxWidth={"45%"}
+        >
+            <Box
+                display={"flex"}
+                flexWrap={"wrap"}
+                sx={{
+                    backgroundColor: message.self ? "primary.light" : "secodary.main",
+                    color: message.self ? "primary" : "secondary",
+                    minWidth: 120,
+                }}
+            >
+                <Box className={classes.message} flexGrow={1}>
+                    <Typography variant="body1">
                         <Linkify>
-                            {body}
+                            {message.content}
                         </Linkify>
                     </Typography>
-                </div>
-                <div className={classes.dateSent} style={{ textAlign: "right" }}>
-                    {dateSent}
-                    {isSelf && (
-                        <DoneAllRoundedIcon
-                            fontSize="small"
-                            color={unread ? "disabled" : "primary"}
-                        />
-                    )}
-                </div>
-            </div>
-        </div>
+                </Box>
+                <MessageStatus {...message} />
+            </Box>
+
+        </Box>
     );
 };
