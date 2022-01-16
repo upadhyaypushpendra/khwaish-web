@@ -44,6 +44,7 @@ export enum WebSocketMessageEvent {
     message_received = 'message_received',
     verified = 'verified',
     connected = 'connected',
+    active_status = 'active_status',
 }
 
 export type WebSocketMessageData = {

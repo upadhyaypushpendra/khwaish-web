@@ -5,22 +5,19 @@ import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import IconButton from '@mui/material/IconButton';
 import BackIcon from '@mui/icons-material/KeyboardBackspace';
-import AccountCircle from '@mui/icons-material/AccountCircle';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
-import FormGroup from '@mui/material/FormGroup';
 import MenuItem from '@mui/material/MenuItem';
 import Menu from '@mui/material/Menu';
 import useStore from '../../store';
 import shallow from 'zustand/shallow';
-import { Icon } from '@mui/material';
 import TypingIndicator from './TypingIndicator';
-import { ChatsSubSection, Friend } from '../../types';
+import { ChatsSubSection } from '../../types';
 import { deleteFriend } from '../../services/users';
 import { useSnackbar } from 'notistack';
 import { restoreSession } from '../../services/auth';
 import { useLoadingOverlay } from "../LoadingOverlay";
 //@ts-ignore
-import Identicon from 'react-identicons';
+import ProfileIcon from '../ProfileIcon';
 
 export enum HeaderEventType {
     view_profile_click,
@@ -77,59 +74,55 @@ export default function ChatHeader({ onEvent }: ChatHeaderProps) {
     }
 
     return (
-        <Box sx={{ flexGrow: 0, width: '100vw' }}>
-            <AppBar position="static" sx={{ backgroundColor: '#7b1fa2' }}>
-                <Toolbar sx={{ display: 'flex', alignItems: "center", width: '100vw', p: 0, mr: 1, ml: 1 }}>
+        <AppBar position="static" sx={{ backgroundColor: '#7b1fa2', flexGrow: 0, width: '100vw' }}>
+            <Toolbar sx={{ display: 'flex', alignItems: "center", width: '100vw', p: 0, mr: 1, ml: 1 }}>
+                <IconButton
+                    size="large"
+                    edge="start"
+                    color="inherit"
+                    aria-label="menu"
+                    onClick={handleBack}
+                >
+                    <BackIcon />
+                </IconButton>
+                <ProfileIcon userId={activeChat?._id} />
+                <Box display="flex" flexDirection="column" flexGrow={100}>
+                    <Typography variant="body2" component="span">
+                        {activeChat?.name}
+                    </Typography>
+                    <TypingIndicator isTyping={isTyping} />
+                </Box>
+                <Box flexGrow={1}>
                     <IconButton
                         size="large"
-                        edge="start"
+                        aria-label="more"
+                        aria-controls="menu-appbar"
+                        aria-haspopup="true"
+                        onClick={handleMenu}
                         color="inherit"
-                        aria-label="menu"
-                        onClick={handleBack}
                     >
-                        <BackIcon />
+                        <MoreVertIcon />
                     </IconButton>
-                    <Icon fontSize='large' sx={{ display: 'flex', alignItems: 'center', mr: 1, borderRadius: '50%' }}>
-                        <Identicon size={32} string={activeChat?._id} />
-                    </Icon>
-                    <Box display="flex" flexDirection="column" flexGrow={100}>
-                        <Typography variant="body2" component="span">
-                            {activeChat?.name}
-                        </Typography>
-                        <TypingIndicator isTyping={isTyping} />
-                    </Box>
-                    <Box flexGrow={1}>
-                        <IconButton
-                            size="large"
-                            aria-label="more"
-                            aria-controls="menu-appbar"
-                            aria-haspopup="true"
-                            onClick={handleMenu}
-                            color="inherit"
-                        >
-                            <MoreVertIcon />
-                        </IconButton>
-                    </Box>
-                    <Menu
-                        id="menu-appbar"
-                        anchorEl={anchorEl}
-                        anchorOrigin={{
-                            vertical: 'top',
-                            horizontal: 'right',
-                        }}
-                        keepMounted
-                        transformOrigin={{
-                            vertical: 'top',
-                            horizontal: 'right',
-                        }}
-                        open={Boolean(anchorEl)}
-                        onClose={handleClose}
-                    >
-                        <MenuItem onClick={handleViewProfile}>View Profile</MenuItem>
-                        <MenuItem onClick={handleUnfriend}>Unfriend</MenuItem>
-                    </Menu>
-                </Toolbar>
-            </AppBar>
-        </Box>
+                </Box>
+                <Menu
+                    id="menu-appbar"
+                    anchorEl={anchorEl}
+                    anchorOrigin={{
+                        vertical: 'top',
+                        horizontal: 'right',
+                    }}
+                    keepMounted
+                    transformOrigin={{
+                        vertical: 'top',
+                        horizontal: 'right',
+                    }}
+                    open={Boolean(anchorEl)}
+                    onClose={handleClose}
+                >
+                    <MenuItem onClick={handleViewProfile}>View Profile</MenuItem>
+                    <MenuItem onClick={handleUnfriend}>Unfriend</MenuItem>
+                </Menu>
+            </Toolbar>
+        </AppBar>
     );
 }

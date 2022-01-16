@@ -18,14 +18,13 @@ const App = () => {
     * Effect to connect to websocket
     */
     React.useEffect(() => {
-        console.log('DEBUG::isLoggedIn', isLoggedIn);
         if (isLoggedIn) {
             WebSocketClient.connect();
         }
     }, [isLoggedIn]);
 
     return (
-        <Container component="main" style={{ margin: 0, padding: 0, maxWidth: '100%' }}>
+        <Container component="main" style={{ margin: 0, padding: 0, maxWidth: '100%', maxHeight: '100vh', }}>
             <CssBaseline />
             <AppBar />
             {section === Section.chats && <Chats />}

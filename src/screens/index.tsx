@@ -20,7 +20,7 @@ const Screens = () => {
     const navigate = useNavigate();
     const [theme] = useStore((state) => [state.theme], shallow);
     const [setSection, setSubSection, setLoggedIn, setUser] =
-        useStore((state) => [state.setSection, state.setSubSection, state.setLoggedIn, state.setUser], shallow);
+        useStore((state) => [state.setSection, state.setSubSection, state.setLoggedIn, state.setUser]);
 
     // Update the theme only if the theme changes
     const muiTheme = React.useMemo(() => createTheme(getThemeDesign(theme)), [theme]);
@@ -38,8 +38,8 @@ const Screens = () => {
         if (!Session.isLoggedIn()) {
             navigate("/signin");
         } else {
-            // setLoggedIn(true);
-            // setUser({ id: Session.userId, name: Session.name, phone: Session.phone, about: Session.about, });
+            setLoggedIn(true);
+            setUser({ id: Session.userId, name: Session.name, phone: Session.phone, about: Session.about, });
         }
     }, [Session.userId]);
 

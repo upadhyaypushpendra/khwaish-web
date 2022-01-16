@@ -1,5 +1,6 @@
 import { PaletteMode } from "@mui/material";
 import create, { SetState, GetState } from "zustand";
+import { persist } from "zustand/middleware";
 import { ChatsSubSection, Friend, Section, SubSection } from "./types";
 
 type User = {
@@ -37,8 +38,8 @@ type Store = {
     reset: () => void;
 };
 
-const useStore = create<Store>(
-    (set: SetState<Store>, get: GetState<Store>) => ({
+const useStore = create<Store>(persist(
+    (set, get) => ({
         ...defaults,
         setLoggedIn: (isLoggedIn: boolean) => set({ isLoggedIn }),
         setUser: (user: User) => set({ user }),
@@ -59,6 +60,10 @@ const useStore = create<Store>(
                 setActiveChat: (activeChat: Friend) => set({ activeChat }),
             }, true);
         }
+    }),
+    {
+        name: "main-store", // unique name
+        getStorage: () => sessionStorage, // (optional) by default, 'localStorage' is used
     })
 );
 

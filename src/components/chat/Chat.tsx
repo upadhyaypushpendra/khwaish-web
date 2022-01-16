@@ -6,11 +6,8 @@ import { ChatsSubSection, Section, WebSocketMessageEvent } from "../../types";
 import ChatHeader, { HeaderEvent, HeaderEventType } from "./ChatHeader";
 import FriendProfile from "./FriendProfile";
 import {
-    ActionRequest,
     ActionResponse,
-    AudioActionResponse,
     ChatController,
-    FileActionResponse,
     MuiChat,
 } from 'chat-ui-react';
 import WebSocketClient from "../../utils/WebSocketClient";
@@ -54,7 +51,7 @@ export default function Chat() {
                 },
             }
         })
-    }, [activeChat]);
+    }, [activeChat?._id]);
 
     const onMessageReceived = React.useCallback(async ({ to, from, message }: any) => {
         // Send message to server
@@ -76,10 +73,10 @@ export default function Chat() {
     const handleCloseProfileView = () => setViewProfile(false);
 
     return section === Section.chats && subSection === ChatsSubSection.chat ? (
-        <Box height={"100vh"} display="flex" flexDirection="column" position={"relative"}>
+        <Box maxHeight={"100vh"} display="flex" flexDirection="column" position={"relative"}>
             <ChatHeader onEvent={handleHeaderEvent} />
-            <Box flexGrow={3} sx={{ maxWidth: '100vw', flex: '1 1 0%', backgroundColor: "blue", border: "1px solid green" }}>
-                <MuiChat chatController={chatController} />
+            <Box flexGrow={3} sx={{ maxWidth: '100vw', maxHeight: '100vh - 60px', flex: '1 1 0%', backgroundColor: "blue", border: "1px solid green" }}>
+                {activeChat?._id && <MuiChat chatController={chatController} />}
             </Box>
             <FriendProfile open={viewProfile} onClose={handleCloseProfileView} />
         </Box >

@@ -7,11 +7,21 @@ class WebsocketClient {
     client: W3CWebSocket | null = null;
     retryLeft = 3;
     messageListeners: any[] = [];
+    connected = false;
     constructor() {
-        this.messageListeners = [{ event: WebSocketMessageEvent.connected, listener: this.connectionEventHandler }];
+        this.messageListeners = [
+            { event: WebSocketMessageEvent.connected, listener: this.connectionEventHandler },
+            { event: WebSocketMessageEvent.verified, listener: this.verifiedEventHandler }];
     }
 
+    verifiedEventHandler = (data: any) => {
+        console.log('DEBUG::WebsocketClient->verifiedEventHandler: verified');
+        this.connected = true;
+    };
+
     connectionEventHandler = ({ tempId }: any) => {
+        console.log('DEBUG::WebsocketClient->connectionEventHandler ', tempId);
+        this.retryLeft = 3;
         const intervalId = setInterval(() => {
             if (this.sendMessage({
                 event: WebSocketMessageEvent.verify,
@@ -27,7 +37,13 @@ class WebsocketClient {
     };
 
     addMessageListener = (event: WebSocketMessageEvent, listener: (data: any) => void) => {
-        this.messageListeners.push({ event, listener });
+        const id = Date.now().toString();
+        this.messageListeners.push({ id, event, listener });
+        return id;
+    }
+
+    removeMessageListener = (id: string) => {
+        this.messageListeners = this.messageListeners.filter(listenerInfo => listenerInfo.id !== id);
     }
 
     connectFailedHandler = (error: any) => {
@@ -44,7 +60,7 @@ class WebsocketClient {
     }
 
     messageHanlder = (message: any) => {
-        // console.log('DEBUG::WebsocketClient->messageHanlder: Message: ', message.data);
+        console.log('DEBUG::WebsocketClient->messageHanlder: Message: ', message.data);
         if (typeof message.data === 'string') {
             const messageData = JSON.parse(message.data);
             // console.log('DEBUG::WebsocketClient->messageHanlder: MessageData: ', messageData);
@@ -101,6 +117,8 @@ class WebsocketClient {
             console.error('DEBUG::WebsocketClient->connect: websocket url not present');
         }
     }
+
+    isConnected = () => this.client?.readyState === this.client?.OPEN && this.connected;
 }
 
 

@@ -1,17 +1,14 @@
 import ListItem from '@mui/material/ListItem';
 import ListItemAvatar from '@mui/material/ListItemAvatar';
 import ListItemText from '@mui/material/ListItemText';
-import Avatar from '@mui/material/Avatar';
-import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import Divider from '@mui/material/Divider';
 import { useSnackbar } from "notistack";
-import { sendRequest } from "../../services/requests";
 import { ChatsSubSection, Friend } from "../../types";
 import TypingIndicator from "./TypingIndicator";
 import useStore from '../../store';
 import shallow from 'zustand/shallow';
 //@ts-ignore
-import Identicon from 'react-identicons';
+import ProfileIcon from '../ProfileIcon';
 
 export type ChatListItemProps = {
     friend: Friend;
@@ -25,21 +22,18 @@ export default function ChatListItem({ friend }: ChatListItemProps) {
     const setActiveChat = useStore((state) => state.setActiveChat, shallow);
 
     const handleChatListItemClick = async () => {
-        // console.log('DEBUG::handleChatListItemClick begin');
         setActiveChat(friend);
         setSubSection(ChatsSubSection.chat);
     };
 
-
     return (
         <ListItem sx={{ minHeight: "68px", borderBottom: "1px solid #a9a9a957" }} key={_id} onClick={handleChatListItemClick}>
             <ListItemAvatar>
-                <Avatar>
-                    <Identicon size={32} string={_id} style={{ borderRadius: '50%' }} />
-                </Avatar>
+                <ProfileIcon userId={_id} />
             </ListItemAvatar>
+
             <ListItemText primary={name} secondary={<TypingIndicator isTyping={Boolean(isTyping)} />} />
             <Divider variant="fullWidth" component="div" />
-        </ListItem>
+        </ListItem >
     );
 }

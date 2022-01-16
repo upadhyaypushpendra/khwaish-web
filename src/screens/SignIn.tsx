@@ -16,11 +16,14 @@ import { useLoadingOverlay } from "../components/LoadingOverlay";
 import Session from "../utils/Session";
 import AppLogo from "../components/AppLogo";
 import { validateAndParsePhone } from "../utils/phone";
+import useStore from "../store";
+import shallow from "zustand/shallow";
 
 const SignIn = (props: any) => {
     const snackbar = useSnackbar();
     const loadingOvelay = useLoadingOverlay();
     const navigate = useNavigate();
+    const [setLoggedIn, setUser] = useStore((state) => [state.setLoggedIn, state.setUser]);
 
     const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
@@ -37,6 +40,8 @@ const SignIn = (props: any) => {
                     if (Boolean(formData.get("rememberMe"))) Session.rememberMe({ phone: phoneNumber, password });
                     else Session.unRememberMe();
                     navigate("/");
+                    setLoggedIn(true);
+                    setUser({ id: Session.userId, name: Session.name, phone: Session.phone, about: Session.phone });
                 } else {
                     snackbar.enqueueSnackbar('Please enter a valid phone number', {
                         variant: "error",
