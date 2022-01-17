@@ -2,3 +2,10 @@
   font-family: 'Source Sans Pro', sans-serif;
   text-align: center;
 }
+
+.Blockquote {
+  color: #999;
+  font-family: 'Hoefler Text', Georgia, serif;
+  font-style: italic;
+  text-align: center;
+}

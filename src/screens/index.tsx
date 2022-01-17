@@ -15,6 +15,7 @@ import Session from "../utils/Session";
 import useStore from "../store";
 import shallow from "zustand/shallow";
 import { ChatsSubSection, FndSubSection, ProfileSubSection, RequestsSubSection, Section, SubSection } from "../types";
+import WebSocketClient from "../utils/WebSocketClient";
 
 const Screens = () => {
     const navigate = useNavigate();
@@ -78,6 +79,19 @@ const Screens = () => {
         const subSection = sessionStorage.getItem('subSection');
         if (Boolean(subSection)) setSubSection(subSection as SubSection);
 
+    }, []);
+
+    const handleBeforeunload = () => {
+        WebSocketClient.closeConnection();
+    };
+
+    /**
+    * Effect to close websocket connection
+    */
+    React.useEffect(() => {
+        window.addEventListener("beforeunload", handleBeforeunload);
+
+        return () => window.addEventListener("beforeunload", handleBeforeunload);
     }, []);
 
     return (

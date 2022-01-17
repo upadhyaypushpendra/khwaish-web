@@ -105,7 +105,7 @@ export default function ChatHeader({ onEvent }: ChatHeaderProps) {
                         {activeChat?.name}
                     </Typography>
                     <Box>
-                        <TypingIndicator isTyping={isTyping} />
+                        <TypingIndicator friendId={activeChat?._id as string} />
                     </Box>
                 </Box>
                 <Box flexGrow={1}>

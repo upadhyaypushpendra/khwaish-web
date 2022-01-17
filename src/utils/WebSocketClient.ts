@@ -99,7 +99,10 @@ class WebsocketClient {
     }
 
     closeConnection = () => {
-        this.client?.close();
+        if (this.isConnected()) {
+            console.log('DEBUG::WebsocketClient->closeConnection: Closing connection');
+            this.client?.close(200, Session.accessToken);
+        }
     }
 
     connect = () => {

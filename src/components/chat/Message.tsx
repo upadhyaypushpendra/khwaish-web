@@ -6,13 +6,15 @@ import DoneAllRoundedIcon from '@mui/icons-material/DoneAllRounded';
 import DoneRoundedIcon from '@mui/icons-material/DoneRounded';
 import Box from "@mui/material/Box";
 import { ChatMessage } from "../../utils/ChatController";
+import { convertFromRaw, Editor, EditorState } from "draft-js";
+import MessageEditor from "./MessageEditor";
+import React from "react";
 
 const useStyles = makeStyles((theme) => ({
     selfMessageWrapper: {
         padding: "3px",
         marginRight: "4px",
         "&> div": {
-            maxWidth: "65%",
             width: "fit-content",
             borderRadius: "16px 0 16px 16px",
             border: "solid 1px transparent",
@@ -25,7 +27,6 @@ const useStyles = makeStyles((theme) => ({
         padding: "3px",
         marginLeft: "4px",
         "&> div": {
-            maxWidth: "65%",
             width: "fit-content",
             borderRadius: "0 16px 16px 16px",
             border: "solid 1px #00000005",
@@ -88,13 +89,15 @@ type MessageProps = {
 
 export default function Message({ message }: MessageProps) {
     const classes = useStyles();
-
+    const [editorState, setEditorState] = React.useState(
+        EditorState.createWithContent(convertFromRaw(JSON.parse(message.content)))
+    );
     return (
         <Box
             justifySelf={message.self ? 'flex-end' : 'flex-start'}
             alignSelf={message.self ? 'flex-end' : 'flex-start'}
             className={message.self ? classes.selfMessageWrapper : classes.messageWrapper}
-            maxWidth={"45%"}
+            maxWidth={"75%"}
         >
             <Box
                 display={"flex"}
@@ -106,11 +109,7 @@ export default function Message({ message }: MessageProps) {
                 }}
             >
                 <Box className={classes.message} flexGrow={1}>
-                    <Typography variant="body1">
-                        <Linkify>
-                            {message.content}
-                        </Linkify>
-                    </Typography>
+                    <Editor editorState={editorState} readOnly={true} onChange={() => { }} />
                 </Box>
                 <MessageStatus {...message} />
             </Box>

@@ -6,6 +6,7 @@ import Divider from "@mui/material/Divider";
 import Button from "@mui/material/Button";
 import WebSocketClient from "../../utils/WebSocketClient";
 import { WebSocketMessageEvent } from "../../types";
+import MessageEditor from "./MessageEditor";
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -42,13 +43,15 @@ const useStyles = makeStyles((theme) => ({
 
 type ReplyContainerProps = {
     onSave: (type: string, content: any) => void,
-    placeholder: string;
+    placeholder?: string;
     userId: string,
     friendId: string,
 };
 
-export default function ReplyContainer({ onSave, placeholder, userId, friendId }: ReplyContainerProps) {
+export default function ReplyContainer({ onSave, userId, friendId }: ReplyContainerProps) {
     const classes = useStyles();
+
+    // const inputRef = React.useRef<null | HTMLTextAreaElement>(null)
 
     const [message, setMessage] = React.useState("");
 
@@ -58,33 +61,25 @@ export default function ReplyContainer({ onSave, placeholder, userId, friendId }
 
     const typingCheckTimeoutRef = React.useRef<any>(0);
 
-    const handleChange = (e: any) => {
+    const handleChange = () => {
         if (typingCheckTimeoutRef.current) {
             clearTimeout(typingCheckTimeoutRef.current);
         }
         typingCheckTimeoutRef.current = setTimeout(() => setIsTyping(false), 1000);
         if (!isTyping) setIsTyping(true);
-        setMessage(e.target.value);
     }
 
-    async function handleSubmit(e: any) {
-        e.preventDefault();
-
+    async function handleSave(message: any) {
         if (message.trim().length === 0) return;
-
-        setButtonLoading(true);
-
         try {
             onSave('text', message);
             setMessage("");
         } catch (e) {
             throw e;
         }
-
-        setButtonLoading(false);
     }
 
-    const handleKeyDown = async (e: any) => e.keyCode === 13 && message && handleSubmit(e);
+    // const handleKeyDown = async (e: any) => (!e.shiftKey) && e.keyCode === 13 && message && handleSubmit(e);
 
     React.useEffect(() => {
         WebSocketClient.sendMessage({
@@ -99,24 +94,23 @@ export default function ReplyContainer({ onSave, placeholder, userId, friendId }
 
     return (
         <Paper
-            component="form"
+            component="div"
             className={classes.root}
-            onSubmit={handleSubmit}
             elevation={2}
             square={true}
         >
-            <InputBase
-                multiline
+            {/* <textarea
+                style={{ resize: 'none' }}
                 rows={3}
                 className={classes.input}
-                inputProps={{
-                    placeholder,
-                    autoFocus: true,
-                }}
+                placeholder={placeholder}
+                autoFocus={true}
+                ref={inputRef}
                 onChange={handleChange}
                 onKeyDown={handleKeyDown}
                 value={message}
-            />
+            /> */}
+            <MessageEditor onSave={handleSave} onChange={handleChange} />
             <Divider className={classes.divider} orientation="vertical" />
             <Paper
                 component={"div"}
@@ -132,9 +126,9 @@ export default function ReplyContainer({ onSave, placeholder, userId, friendId }
                     className={classes.sendMessageButton}
                     color="primary"
                     aria-label="send-message"
-                    type="submit"
+                    type="button"
                     variant="contained"
-                    disabled={buttonLoading || message.length === 0}
+                    onClick={handleSave}
                 >
                     SEND
                 </Button>

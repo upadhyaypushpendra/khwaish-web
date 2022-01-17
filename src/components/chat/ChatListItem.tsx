@@ -15,7 +15,7 @@ export type ChatListItemProps = {
 };
 
 export default function ChatListItem({ friend }: ChatListItemProps) {
-    const { _id, name, isTyping } = friend;
+    const { _id, name } = friend;
 
     const snackbar = useSnackbar();
     const setSubSection = useStore((state) => state.setSubSection, shallow);
@@ -32,7 +32,7 @@ export default function ChatListItem({ friend }: ChatListItemProps) {
                 <ProfileIcon userId={_id} />
             </ListItemAvatar>
 
-            <ListItemText primary={name} secondary={<TypingIndicator isTyping={Boolean(isTyping)} />} />
+            <ListItemText primary={name} secondary={<TypingIndicator friendId={_id} />} />
             <Divider variant="fullWidth" component="div" />
         </ListItem >
     );
