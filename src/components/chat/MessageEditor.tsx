@@ -1,8 +1,38 @@
 import React from 'react';
-import { ContentBlock, convertToRaw, DraftHandleValue, Editor, EditorState } from 'draft-js';
+import { ContentBlock, DraftHandleValue, Editor, EditorState } from 'draft-js';
 import { getDefaultKeyBinding, KeyBindingUtil } from 'draft-js';
-import { Box } from '@mui/material';
 const { hasCommandModifier } = KeyBindingUtil;
+import { makeStyles } from "@mui/styles";
+
+const useStyles = makeStyles({
+    editorContainer: {
+        // padding: "1em",
+        // margin: "1em",
+        display: "flex",
+        flexDirection: "column",
+        flexGrow: 1,
+    },
+    controlsContainer: {
+        display: "flex",
+        "& > *": {
+            margin: "2px",
+        }
+    },
+    buttonSelected: {
+        backgroundColor: "gray",
+    },
+    editors: {
+        border: "1px black solid",
+        padding: "0.5em",
+        margin: "2px",
+        fontFamily: "OpenSans",
+        fontSize: "1em",
+        maxHeight: "43em",
+        minHeight: "4em",
+        height: "4em",
+        overflow: "auto",
+    }
+});
 
 function keyBinding(e: any): string | null {
     if (e.keyCode === 13 && hasCommandModifier(e)) {
@@ -21,15 +51,13 @@ function blockStyle(contentBlock: ContentBlock) {
 
 
 export type TypingEditorProps = {
-    onSave: (value: any) => void,
-    onChange: () => void
+    editorState: EditorState;
+    onSave: () => void,
+    onChange: (newState: EditorState) => void,
 };
 
 export default function MessageEditor(props: TypingEditorProps) {
-    const [editorState, setEditorState] = React.useState(
-        EditorState.createEmpty()
-    );
-
+    const classes = useStyles();
     const editor = React.useRef<Editor | null>(null);
 
     function focusEditor() {
@@ -42,36 +70,27 @@ export default function MessageEditor(props: TypingEditorProps) {
 
     const handleKeyCommand = (command: string): DraftHandleValue => {
         if (command === 'send-message') {
-            props.onSave(JSON.stringify(convertToRaw(editorState.getCurrentContent())));
-            setEditorState(EditorState.createEmpty());
+            props.onSave();
             focusEditor();
             return 'handled';
         }
         return 'not-handled';
     };
 
-    const handleChange = (newEditorState: EditorState) => {
-        props.onChange();
-        setEditorState(newEditorState);
-    };
-
     return (
-        <Box
-            onClick={focusEditor}
-            flexGrow={1}
-            sx={{
-                border: '1px solid black',
-            }}
-        >
-            <Editor
-                ref={editor}
-                editorState={editorState}
-                onChange={handleChange}
-                placeholder="Type your message here..."
-                handleKeyCommand={handleKeyCommand}
-                keyBindingFn={keyBinding}
-                blockStyleFn={blockStyle}
-            />
-        </Box>
+        <div className={classes.editorContainer}>
+            <div className={classes.editors} onClick={focusEditor}>
+                <Editor
+                    ref={editor}
+                    editorState={props.editorState}
+                    onChange={props.onChange}
+                    // placeholder="Type your message here..."
+                    handleKeyCommand={handleKeyCommand}
+                    keyBindingFn={keyBinding}
+                    blockStyleFn={blockStyle}
+                    onBlur={focusEditor}
+                />
+            </div>
+        </div>
     );
 }

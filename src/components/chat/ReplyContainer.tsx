@@ -1,12 +1,12 @@
 import React from "react";
 import { makeStyles } from "@mui/styles";
 import Paper from "@mui/material/Paper";
-import InputBase from "@mui/material/InputBase";
 import Divider from "@mui/material/Divider";
 import Button from "@mui/material/Button";
 import WebSocketClient from "../../utils/WebSocketClient";
 import { WebSocketMessageEvent } from "../../types";
 import MessageEditor from "./MessageEditor";
+import { convertToRaw, EditorState } from "draft-js";
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -14,6 +14,8 @@ const useStyles = makeStyles((theme) => ({
         alignItems: "center",
         width: "100%",
         borderTop: "1px solid lightgrey",
+        margin: 0,
+        padding: 0,
     },
     input: {
         marginLeft: 8,
@@ -28,10 +30,8 @@ const useStyles = makeStyles((theme) => ({
         margin: 4,
     },
     sendMessageButton: {
-        // background: "#07616c",
         borderRadius: "32px",
         minHeight: "32px",
-        // color: "white",
         margin: 0,
         border: "1px solid #979797",
     },
@@ -51,35 +51,22 @@ type ReplyContainerProps = {
 export default function ReplyContainer({ onSave, userId, friendId }: ReplyContainerProps) {
     const classes = useStyles();
 
-    // const inputRef = React.useRef<null | HTMLTextAreaElement>(null)
-
-    const [message, setMessage] = React.useState("");
-
-    const [buttonLoading, setButtonLoading] = React.useState(false);
-
     const [isTyping, setIsTyping] = React.useState(false);
 
     const typingCheckTimeoutRef = React.useRef<any>(0);
 
-    const handleChange = () => {
-        if (typingCheckTimeoutRef.current) {
-            clearTimeout(typingCheckTimeoutRef.current);
-        }
-        typingCheckTimeoutRef.current = setTimeout(() => setIsTyping(false), 1000);
-        if (!isTyping) setIsTyping(true);
-    }
+    const [editorState, setEditorState] = React.useState(
+        EditorState.createEmpty()
+    );
 
-    async function handleSave(message: any) {
-        if (message.trim().length === 0) return;
+    async function handleSave() {
         try {
-            onSave('text', message);
-            setMessage("");
+            onSave('text', JSON.stringify(convertToRaw(editorState.getCurrentContent())));
+            setEditorState(EditorState.createEmpty());
         } catch (e) {
             throw e;
         }
     }
-
-    // const handleKeyDown = async (e: any) => (!e.shiftKey) && e.keyCode === 13 && message && handleSubmit(e);
 
     React.useEffect(() => {
         WebSocketClient.sendMessage({
@@ -92,6 +79,15 @@ export default function ReplyContainer({ onSave, userId, friendId }: ReplyContai
         })
     }, [isTyping]);
 
+    const handleChange = (newEditorState: EditorState) => {
+        if (typingCheckTimeoutRef.current) {
+            clearTimeout(typingCheckTimeoutRef.current);
+        }
+        typingCheckTimeoutRef.current = setTimeout(() => setIsTyping(false), 1000);
+        if (!isTyping) setIsTyping(true);
+        setEditorState(newEditorState);
+    };
+
     return (
         <Paper
             component="div"
@@ -99,18 +95,7 @@ export default function ReplyContainer({ onSave, userId, friendId }: ReplyContai
             elevation={2}
             square={true}
         >
-            {/* <textarea
-                style={{ resize: 'none' }}
-                rows={3}
-                className={classes.input}
-                placeholder={placeholder}
-                autoFocus={true}
-                ref={inputRef}
-                onChange={handleChange}
-                onKeyDown={handleKeyDown}
-                value={message}
-            /> */}
-            <MessageEditor onSave={handleSave} onChange={handleChange} />
+            <MessageEditor editorState={editorState} onSave={handleSave} onChange={handleChange} />
             <Divider className={classes.divider} orientation="vertical" />
             <Paper
                 component={"div"}
