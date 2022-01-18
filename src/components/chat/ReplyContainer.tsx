@@ -82,76 +82,33 @@ type ReplyContainerProps = {
 
 export default function ReplyContainer({ onSave, userId, friendId, onFocus }: ReplyContainerProps) {
     const classes = useStyles();
-    // const rawEditorState = useStore((state) => state.rawEditorState, shallow);
-    // const setRawEditorState = useStore(state => state.setRawEditorState);
-
-    // const [editorState, setEditorState] =
-    //     React.useState(EditorState.createEmpty());
 
     const editor = React.useRef<RichTextEditor | null>(null);
 
-    // const [isTyping, setIsTyping] = React.useState(false);
+    const [isTyping, setIsTyping] = React.useState(false);
 
-    // const typingCheckTimeoutRef = React.useRef<any>(0);
+    const typingCheckTimeoutRef = React.useRef<any>(0);
 
-    // React.useEffect(() => {
-    //     focusEditor();
-    //     setEditorState(EditorState.moveFocusToEnd(editorState));
-    // }, []);
+    const [value, setValue] = React.useState<EditorValue>(RichTextEditor.createEmptyValue());
 
-    // React.useEffect(() => {
-    //     WebSocketClient.sendMessage({
-    //         event: WebSocketMessageEvent.typing,
-    //         data: {
-    //             from: userId,
-    //             to: friendId,
-    //             isTyping,
-    //         }
-    //     })
-    // }, [isTyping]);
+    React.useEffect(() => {
+        WebSocketClient.sendMessage({
+            event: WebSocketMessageEvent.typing,
+            data: {
+                from: userId,
+                to: friendId,
+                isTyping,
+            }
+        })
+    }, [isTyping]);
 
-    // React.useEffect(() => {
-    //     if (typingCheckTimeoutRef.current) {
-    //         clearTimeout(typingCheckTimeoutRef.current);
-    //     }
-    //     typingCheckTimeoutRef.current = setTimeout(() => setIsTyping(false), 1000);
-    //     if (!isTyping) setIsTyping(true);
-    // }, [editorState]);
-
-    // const clearEditor = () => {
-    //     const newEditorState = EditorState.createEmpty();
-    //     setEditorState(newEditorState);
-    // };
-
-    // async function handleSave() {
-    //     try {
-    //         onSave('text', JSON.stringify(convertToRaw(editorState.getCurrentContent())));
-    //         clearEditor();
-    //         focusEditor();
-    //     } catch (e) {
-    //         throw e;
-    //     }
-    // }
-
-    // const handleKeyCommand = (command: string): DraftHandleValue => {
-    //     if (command === 'send-message') {
-    //         handleSave();
-    //         return 'handled';
-    //     }
-    //     return 'not-handled';
-    // };
-
-    // const handleChange = (newState: EditorState) => {
-    //     setEditorState(newState);
-    //     // setRawEditorState(convertToRaw(newState.getCurrentContent()));
-    // };
-
-    const [value, setValue] = React.useState<EditorValue>(
-        RichTextEditor.createValueFromString(
-            "<p>what ab kya hoba asdf&nbsp;</p",
-            "html"
-        )
-    );
+    React.useEffect(() => {
+        if (typingCheckTimeoutRef.current) {
+            clearTimeout(typingCheckTimeoutRef.current);
+        }
+        typingCheckTimeoutRef.current = setTimeout(() => setIsTyping(false), 1000);
+        if (!isTyping) setIsTyping(true);
+    }, [value]);
 
     const clearEditor = () => setValue(RichTextEditor.createEmptyValue());
 
@@ -160,7 +117,7 @@ export default function ReplyContainer({ onSave, userId, friendId, onFocus }: Re
     };
 
     const handleSave = () => {
-        const message = value.toString('html'); 
+        const message = value.toString('html');
         onSave('text', message);
         clearEditor();
     };
@@ -173,19 +130,6 @@ export default function ReplyContainer({ onSave, userId, friendId, onFocus }: Re
             square={true}
         >
             <div className={classes.editorContainer}>
-                {/* <div className={classes.editors} onClick={focusEditor}>
-                    <Editor
-                        ref={editor}
-                        editorState={editorState}
-                        onChange={handleChange}
-                        // placeholder="Type your message here..."
-                        handleKeyCommand={handleKeyCommand}
-                        keyBindingFn={keyBinding}
-                        blockStyleFn={blockStyle}
-                        onBlur={focusEditor}
-                        stripPastedStyles
-                    />
-                </div> */}
                 <RichTextEditor
                     ref={editor}
                     value={value}
