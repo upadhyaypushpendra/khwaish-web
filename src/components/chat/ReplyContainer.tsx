@@ -5,8 +5,22 @@ import Divider from "@mui/material/Divider";
 import Button from "@mui/material/Button";
 import WebSocketClient from "../../utils/WebSocketClient";
 import { WebSocketMessageEvent } from "../../types";
-import MessageEditor from "./MessageEditor";
-import { convertToRaw, EditorState } from "draft-js";
+import { ContentState, convertFromHTML, convertFromRaw, convertToRaw, DraftHandleValue, Editor, EditorState } from 'draft-js';
+import useStore from "../../store";
+import shallow from "zustand/shallow";
+import { keyBinding, blockStyle } from "../../utils/editor";
+import RichTextEditor, { EditorValue, ToolbarConfig } from "react-rte";
+
+const toolbarConfig: ToolbarConfig = {
+    display: ["INLINE_STYLE_BUTTONS"],
+    INLINE_STYLE_BUTTONS: [
+        { label: "Bold", style: "BOLD", className: "custom-css-class" },
+        { label: "Italic", style: "ITALIC" },
+        { label: "Underline", style: "UNDERLINE" }
+    ],
+    BLOCK_TYPE_DROPDOWN: [],
+    BLOCK_TYPE_BUTTONS: []
+};
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -16,11 +30,7 @@ const useStyles = makeStyles((theme) => ({
         borderTop: "1px solid lightgrey",
         margin: 0,
         padding: 0,
-    },
-    input: {
-        marginLeft: 8,
-        marginTop: 4,
-        flex: 1,
+        flex: "0 1 auto",
     },
     iconButton: {
         padding: 10,
@@ -35,10 +45,31 @@ const useStyles = makeStyles((theme) => ({
         margin: 0,
         border: "1px solid #979797",
     },
-    messageTextField: {
-        backgroundColor: "transparent",
-        width: "calc(100% - 60px)",
+    editorContainer: {
+        display: "flex",
+        flexDirection: "column",
+        flexGrow: 1,
     },
+    controlsContainer: {
+        display: "flex",
+        "& > *": {
+            margin: "2px",
+        }
+    },
+    buttonSelected: {
+        backgroundColor: "gray",
+    },
+    editors: {
+        border: "1px black solid",
+        padding: "0.5em",
+        margin: "2px",
+        fontFamily: "OpenSans",
+        fontSize: "1em",
+        maxHeight: "43em",
+        minHeight: "4em",
+        height: "4em",
+        overflow: "auto",
+    }
 }));
 
 type ReplyContainerProps = {
@@ -46,46 +77,92 @@ type ReplyContainerProps = {
     placeholder?: string;
     userId: string,
     friendId: string,
+    onFocus?: () => void,
 };
 
-export default function ReplyContainer({ onSave, userId, friendId }: ReplyContainerProps) {
+export default function ReplyContainer({ onSave, userId, friendId, onFocus }: ReplyContainerProps) {
     const classes = useStyles();
+    // const rawEditorState = useStore((state) => state.rawEditorState, shallow);
+    // const setRawEditorState = useStore(state => state.setRawEditorState);
 
-    const [isTyping, setIsTyping] = React.useState(false);
+    // const [editorState, setEditorState] =
+    //     React.useState(EditorState.createEmpty());
 
-    const typingCheckTimeoutRef = React.useRef<any>(0);
+    const editor = React.useRef<RichTextEditor | null>(null);
 
-    const [editorState, setEditorState] = React.useState(
-        EditorState.createEmpty()
+    // const [isTyping, setIsTyping] = React.useState(false);
+
+    // const typingCheckTimeoutRef = React.useRef<any>(0);
+
+    // React.useEffect(() => {
+    //     focusEditor();
+    //     setEditorState(EditorState.moveFocusToEnd(editorState));
+    // }, []);
+
+    // React.useEffect(() => {
+    //     WebSocketClient.sendMessage({
+    //         event: WebSocketMessageEvent.typing,
+    //         data: {
+    //             from: userId,
+    //             to: friendId,
+    //             isTyping,
+    //         }
+    //     })
+    // }, [isTyping]);
+
+    // React.useEffect(() => {
+    //     if (typingCheckTimeoutRef.current) {
+    //         clearTimeout(typingCheckTimeoutRef.current);
+    //     }
+    //     typingCheckTimeoutRef.current = setTimeout(() => setIsTyping(false), 1000);
+    //     if (!isTyping) setIsTyping(true);
+    // }, [editorState]);
+
+    // const clearEditor = () => {
+    //     const newEditorState = EditorState.createEmpty();
+    //     setEditorState(newEditorState);
+    // };
+
+    // async function handleSave() {
+    //     try {
+    //         onSave('text', JSON.stringify(convertToRaw(editorState.getCurrentContent())));
+    //         clearEditor();
+    //         focusEditor();
+    //     } catch (e) {
+    //         throw e;
+    //     }
+    // }
+
+    // const handleKeyCommand = (command: string): DraftHandleValue => {
+    //     if (command === 'send-message') {
+    //         handleSave();
+    //         return 'handled';
+    //     }
+    //     return 'not-handled';
+    // };
+
+    // const handleChange = (newState: EditorState) => {
+    //     setEditorState(newState);
+    //     // setRawEditorState(convertToRaw(newState.getCurrentContent()));
+    // };
+
+    const [value, setValue] = React.useState<EditorValue>(
+        RichTextEditor.createValueFromString(
+            "<p>what ab kya hoba asdf&nbsp;</p",
+            "html"
+        )
     );
 
-    async function handleSave() {
-        try {
-            onSave('text', JSON.stringify(convertToRaw(editorState.getCurrentContent())));
-            setEditorState(EditorState.createEmpty());
-        } catch (e) {
-            throw e;
-        }
-    }
+    const clearEditor = () => setValue(RichTextEditor.createEmptyValue());
 
-    React.useEffect(() => {
-        WebSocketClient.sendMessage({
-            event: WebSocketMessageEvent.typing,
-            data: {
-                from: userId,
-                to: friendId,
-                isTyping,
-            }
-        })
-    }, [isTyping]);
+    const onChange = (value: EditorValue) => {
+        setValue(value);
+    };
 
-    const handleChange = (newEditorState: EditorState) => {
-        if (typingCheckTimeoutRef.current) {
-            clearTimeout(typingCheckTimeoutRef.current);
-        }
-        typingCheckTimeoutRef.current = setTimeout(() => setIsTyping(false), 1000);
-        if (!isTyping) setIsTyping(true);
-        setEditorState(newEditorState);
+    const handleSave = () => {
+        const message = value.toString('html'); 
+        onSave('text', message);
+        clearEditor();
     };
 
     return (
@@ -95,7 +172,32 @@ export default function ReplyContainer({ onSave, userId, friendId }: ReplyContai
             elevation={2}
             square={true}
         >
-            <MessageEditor editorState={editorState} onSave={handleSave} onChange={handleChange} />
+            <div className={classes.editorContainer}>
+                {/* <div className={classes.editors} onClick={focusEditor}>
+                    <Editor
+                        ref={editor}
+                        editorState={editorState}
+                        onChange={handleChange}
+                        // placeholder="Type your message here..."
+                        handleKeyCommand={handleKeyCommand}
+                        keyBindingFn={keyBinding}
+                        blockStyleFn={blockStyle}
+                        onBlur={focusEditor}
+                        stripPastedStyles
+                    />
+                </div> */}
+                <RichTextEditor
+                    ref={editor}
+                    value={value}
+                    onChange={onChange}
+                    toolbarConfig={toolbarConfig}
+                    autoFocus={true}
+                    placeholder="Type message here..."
+                    editorStyle={{ backgroundColor: "inherit", color: 'inherit' }}
+                    rootStyle={{ backgroundColor: "inherit", color: 'inherit' }}
+                    toolbarStyle={{ backgroundColor: "inherit", color: 'inherit' }}
+                />
+            </div>
             <Divider className={classes.divider} orientation="vertical" />
             <Paper
                 component={"div"}

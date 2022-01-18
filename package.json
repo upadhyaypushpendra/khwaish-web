@@ -26,6 +26,7 @@
     "react-identicons": "^1.2.5",
     "react-linkify": "^1.0.0-alpha",
     "react-router-dom": "6.2.1",
+    "react-rte": "^0.16.4",
     "react-scripts": "5.0.0",
     "websocket": "1.0.34",
     "zustand": "3.6.9"
@@ -33,12 +34,14 @@
   "devDependencies": {
     "@types/crypto-js": "^4.0.2",
     "@types/draft-js": "^0.11.8",
+    "@types/draftjs-to-html": "^0.8.1",
     "@types/js-cookie": "3.0.1",
     "@types/node": "17.0.4",
     "@types/react": "17.0.20",
     "@types/react-dom": "17.0.9",
     "@types/react-linkify": "^1.0.1",
     "@types/react-router-dom": "5.3.2",
+    "@types/react-rte": "^0.16.3",
     "@types/websocket": "1.0.4",
     "dotenv": "^10.0.0",
     "mini-css-extract-plugin": "2.4.5",

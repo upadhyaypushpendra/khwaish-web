@@ -88,7 +88,12 @@ export default function ChatHeader({ onEvent }: ChatHeaderProps) {
     }, [isTyping, typingEventHandler]);
 
     return (
-        <AppBar position="fixed" sx={{ backgroundColor: '#7b1fa2', flexGrow: 0, width: '100vw' }}>
+        <AppBar
+            position='relative'
+            sx={{
+                flex: "0 1 auto",
+            }}
+        >
             <Toolbar sx={{ display: 'flex', alignItems: "center", width: '100vw', p: 0, mr: 1, ml: 1 }}>
                 <IconButton
                     size="large"

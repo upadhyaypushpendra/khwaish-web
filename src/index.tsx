@@ -3,6 +3,7 @@ import { BrowserRouter } from "react-router-dom";
 import { render } from "react-dom";
 
 import Screens from "./screens";
+import "./styles.css";
 
 const rootElement = document.getElementById("root");
 render(

@@ -17,6 +17,7 @@ export default function Chat() {
     const [viewProfile, setViewProfile] = React.useState(false);
     const [chatController, setChatController] = React.useState<ChatController | null>(null);
     const [messages, setMessages] = React.useState<ChatMessage[]>([]);
+    const [scrollToBottom, toggleScrollToBottom] = React.useState(false);
 
 
     const handleHeaderEvent = async (event: HeaderEvent) => {
@@ -75,29 +76,25 @@ export default function Chat() {
 
     const handleCloseProfileView = () => setViewProfile(false);
 
+    const handleFocusInInput = () => toggleScrollToBottom(!scrollToBottom);
+
     return section === Section.chats && subSection === ChatsSubSection.chat ? (
-        <Box maxHeight={"100vh"} display="flex" flexDirection="column" position={"relative"}>
+        <Box
+            sx={{
+                display: "flex",
+                flexFlow: "column",
+                height: "100%",
+            }}
+        >
             <ChatHeader onEvent={handleHeaderEvent} />
-            <Box
-                display="flex"
-                flexDirection="column"
-                flexGrow={3}
-                sx={{
-                    maxWidth: '100vw',
-                    height: '100vh',
-                    border: "1px solid green",
-                }}
-            >
-                <MessagesContainer messages={messages} />
-                <Box justifySelf="flex-end" flexGrow={0}>
-                    <ReplyContainer
-                        onSave={handleSendMessage}
-                        placeholder="Type your message here..."
-                        userId={Session.userId}
-                        friendId={activeChat?._id as string}
-                    />
-                </Box>
-            </Box>
+            <MessagesContainer messages={messages} toggleScrollToBottom={scrollToBottom} />
+            <ReplyContainer
+                onSave={handleSendMessage}
+                placeholder="Type your message here..."
+                userId={Session.userId}
+                friendId={activeChat?._id as string}
+                onFocus={handleFocusInInput}
+            />
             <FriendProfile open={viewProfile} onClose={handleCloseProfileView} />
         </Box >
     ) : null;

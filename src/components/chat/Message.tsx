@@ -10,6 +10,7 @@ import { convertFromRaw, Editor, EditorState } from "draft-js";
 import MessageEditor from "./MessageEditor";
 import React from "react";
 
+
 const useStyles = makeStyles((theme) => ({
     selfMessageWrapper: {
         padding: "3px",
@@ -39,6 +40,9 @@ const useStyles = makeStyles((theme) => ({
         marginBottom: 0,
         textAlign: "left",
         wordBreak: "break-word",
+        "& > p": {
+            margin: "2px",
+        }
     },
     dateSent: {
         textAlign: "right",
@@ -89,9 +93,9 @@ type MessageProps = {
 
 export default function Message({ message }: MessageProps) {
     const classes = useStyles();
-    const [editorState, setEditorState] = React.useState(
-        EditorState.createWithContent(convertFromRaw(JSON.parse(message.content)))
-    );
+    // const [editorState, setEditorState] = React.useState(
+    //     EditorState.createWithContent(convertFromRaw(JSON.parse(message.content)))
+    // );
     return (
         <Box
             justifySelf={message.self ? 'flex-end' : 'flex-start'}
@@ -108,9 +112,12 @@ export default function Message({ message }: MessageProps) {
                     minWidth: 120,
                 }}
             >
-                <Box className={classes.message} flexGrow={1}>
-                    <Editor editorState={editorState} readOnly={true} onChange={() => { }} />
-                </Box>
+                <Box
+                    className={classes.message}
+                    flexGrow={1}
+                    component="div"
+                    dangerouslySetInnerHTML={{ __html: message.content }}
+                />
                 <MessageStatus {...message} />
             </Box>
 

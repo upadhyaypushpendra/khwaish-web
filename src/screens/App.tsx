@@ -24,7 +24,7 @@ const App = () => {
     }, [isLoggedIn]);
 
     return (
-        <Container component="main" style={{ margin: 0, padding: 0, maxWidth: '100%', maxHeight: '100vh', }}>
+        <Container component="main" style={{ margin: 0, height: '100%', maxWidth: '100%', padding: 0 }}>
             <CssBaseline />
             <AppBar />
             {section === Section.chats && <Chats />}

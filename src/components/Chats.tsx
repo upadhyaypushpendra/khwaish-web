@@ -4,7 +4,8 @@ import ChatList from './chat/ChatList';
 
 const ChatsWrapper = styled('div')(({ theme }) => ({
     backgroundColor: theme.palette.background.default,
-    maxHeight: '100vh',
+    height: "100%",
+    margin: 0,
 }));
 
 export default function Chats() {

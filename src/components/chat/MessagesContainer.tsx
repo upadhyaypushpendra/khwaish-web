@@ -6,6 +6,7 @@ import { ChatMessage } from "../../utils/ChatController";
 
 export type MessagesContanerProps = {
     messages: ChatMessage[];
+    toggleScrollToBottom?: boolean;
 };
 
 export default function MessagesContainer(props: MessagesContanerProps) {
@@ -20,10 +21,21 @@ export default function MessagesContainer(props: MessagesContanerProps) {
         if (isShow !== stopOnScroll) setStopOnScroll(isShow)
     }, [])
 
-    React.useEffect(scrollToBottom, [props.messages])
+    React.useEffect(scrollToBottom, [props.messages, props.toggleScrollToBottom])
 
     return (
-        <Box flexGrow={1} display="flex" flexDirection="column" overflow={'scroll'} sx={{ paddingTop: "80px" }}>
+        <Box
+            sx={{
+                flex: "1 1 auto",
+                display: "flex",
+                flexFlow: "column",
+                height: "100%",
+                overflowY: "auto",
+                overflowX: "hidden",
+                paddingTop: 1,
+                paddingBottom: 1,
+            }}
+        >
             {props.messages.map(message => (<Message key={message.id} message={message} />))}
             <div ref={messagesEndRef} />
         </Box>
