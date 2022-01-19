@@ -1,26 +1,27 @@
 import React from "react";
 import { makeStyles } from "@mui/styles";
+import { styled } from "@mui/material/styles";
+import TextareaAutosize, { TextareaAutosizeProps } from "@mui/material/TextareaAutosize";
 import Paper from "@mui/material/Paper";
 import Divider from "@mui/material/Divider";
 import Button from "@mui/material/Button";
+import SendIcon from '@mui/icons-material/Send';
 import WebSocketClient from "../../utils/WebSocketClient";
 import { WebSocketMessageEvent } from "../../types";
-import { ContentState, convertFromHTML, convertFromRaw, convertToRaw, DraftHandleValue, Editor, EditorState } from 'draft-js';
-import useStore from "../../store";
-import shallow from "zustand/shallow";
-import { keyBinding, blockStyle } from "../../utils/editor";
-import RichTextEditor, { EditorValue, ToolbarConfig } from "react-rte";
 
-const toolbarConfig: ToolbarConfig = {
-    display: ["INLINE_STYLE_BUTTONS"],
-    INLINE_STYLE_BUTTONS: [
-        { label: "Bold", style: "BOLD", className: "custom-css-class" },
-        { label: "Italic", style: "ITALIC" },
-        { label: "Underline", style: "UNDERLINE" }
-    ],
-    BLOCK_TYPE_DROPDOWN: [],
-    BLOCK_TYPE_BUTTONS: []
-};
+const CustomTextArea = styled((props: TextareaAutosizeProps) => (
+    <TextareaAutosize {...props} />
+))({
+    padding: 8,
+    fontSize: "1em",
+    resize: "none",
+    width: "-webkit-fill-available",
+    minHeight: "1em",
+    maxHeight: "4em",
+    backgroundColor: 'inherit',
+    color: 'inherit',
+    border: 'none',
+});
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -32,9 +33,6 @@ const useStyles = makeStyles((theme) => ({
         padding: 0,
         flex: "0 1 auto",
     },
-    iconButton: {
-        padding: 10,
-    },
     divider: {
         height: "90%",
         margin: 4,
@@ -44,32 +42,24 @@ const useStyles = makeStyles((theme) => ({
         minHeight: "32px",
         margin: 0,
         border: "1px solid #979797",
+        padding: 0,
     },
     editorContainer: {
         display: "flex",
         flexDirection: "column",
         flexGrow: 1,
     },
-    controlsContainer: {
-        display: "flex",
-        "& > *": {
-            margin: "2px",
-        }
-    },
-    buttonSelected: {
-        backgroundColor: "gray",
-    },
-    editors: {
-        border: "1px black solid",
-        padding: "0.5em",
-        margin: "2px",
-        fontFamily: "OpenSans",
+    messageArea: {
+        padding: 8,
         fontSize: "1em",
-        maxHeight: "43em",
-        minHeight: "4em",
-        height: "4em",
-        overflow: "auto",
-    }
+        resize: "none",
+        width: "-webkit-fill-available",
+        minHeight: "1em",
+        maxHeight: "4em",
+        backgroundColor: 'inherit',
+        color: 'inherit',
+        border: 'none',
+    },
 }));
 
 type ReplyContainerProps = {
@@ -83,13 +73,11 @@ type ReplyContainerProps = {
 export default function ReplyContainer({ onSave, userId, friendId, onFocus }: ReplyContainerProps) {
     const classes = useStyles();
 
-    const editor = React.useRef<RichTextEditor | null>(null);
-
     const [isTyping, setIsTyping] = React.useState(false);
 
     const typingCheckTimeoutRef = React.useRef<any>(0);
 
-    const [value, setValue] = React.useState<EditorValue>(RichTextEditor.createEmptyValue());
+    const [value, setValue] = React.useState<string>("");
 
     React.useEffect(() => {
         WebSocketClient.sendMessage({
@@ -106,20 +94,28 @@ export default function ReplyContainer({ onSave, userId, friendId, onFocus }: Re
         if (typingCheckTimeoutRef.current) {
             clearTimeout(typingCheckTimeoutRef.current);
         }
-        typingCheckTimeoutRef.current = setTimeout(() => setIsTyping(false), 1000);
+        typingCheckTimeoutRef.current = setTimeout(() => setIsTyping(false), 5000);
         if (!isTyping) setIsTyping(true);
     }, [value]);
 
-    const clearEditor = () => setValue(RichTextEditor.createEmptyValue());
+    const handleChange = (e: any) => setValue(e.target.value);
 
-    const onChange = (value: EditorValue) => {
-        setValue(value);
+    const handleKeyDown = (evt: any) => {
+        if (evt.keyCode === 13 && !evt.shiftKey) {
+            handleSave();
+            evt.preventDefault();
+        } else {
+            setValue(evt.target.value);
+        }
     };
 
     const handleSave = () => {
-        const message = value.toString('html');
-        onSave('text', message);
-        clearEditor();
+        onSave('text', value.replace(/(\r\n)+/g, "\r\n")
+            .replace(/\r+/g, "\r")
+            .replace(/\n+/g, "\n")
+            .replace("\n", "<br>"));
+        
+        setValue("");
     };
 
     return (
@@ -130,16 +126,14 @@ export default function ReplyContainer({ onSave, userId, friendId, onFocus }: Re
             square={true}
         >
             <div className={classes.editorContainer}>
-                <RichTextEditor
-                    ref={editor}
+                <textarea
                     value={value}
-                    onChange={onChange}
-                    toolbarConfig={toolbarConfig}
-                    autoFocus={true}
-                    placeholder="Type message here..."
-                    editorStyle={{ backgroundColor: "inherit", color: 'inherit' }}
-                    rootStyle={{ backgroundColor: "inherit", color: 'inherit' }}
-                    toolbarStyle={{ backgroundColor: "inherit", color: 'inherit' }}
+                    id="messageArea"
+                    name="messageArea"
+                    placeholder="Type message here.."
+                    onChange={handleChange}
+                    onKeyDown={handleKeyDown}
+                    className={classes.messageArea}
                 />
             </div>
             <Divider className={classes.divider} orientation="vertical" />
@@ -160,6 +154,7 @@ export default function ReplyContainer({ onSave, userId, friendId, onFocus }: Re
                     type="button"
                     variant="contained"
                     onClick={handleSave}
+                    endIcon={<SendIcon />}
                 >
                     SEND
                 </Button>

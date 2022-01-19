@@ -1,6 +1,5 @@
 import { PaletteMode } from "@mui/material";
-import { convertToRaw, EditorState, RawDraftContentState } from "draft-js";
-import create, { SetState, GetState } from "zustand";
+import create from "zustand";
 import { persist } from "zustand/middleware";
 import { ChatsSubSection, Friend, Section, SubSection } from "./types";
 
@@ -19,7 +18,6 @@ const defaults = {
     section: Section.chats,
     subSection: ChatsSubSection.list,
     activeChat: null,
-    rawEditorState: convertToRaw(EditorState.createEmpty().getCurrentContent()),
 };
 
 type Store = {
@@ -30,7 +28,6 @@ type Store = {
     section: Section;
     subSection: SubSection;
     activeChat: Friend | null;
-    rawEditorState: RawDraftContentState;
     setLoggedIn: (isLoggedIn: boolean) => void;
     setUser: (user: User) => void;
     toggleEmojiOpen: () => void;
@@ -38,7 +35,6 @@ type Store = {
     setSection: (section: Section) => void;
     setSubSection: (section: SubSection) => void;
     setActiveChat: (activeChat: Friend) => void;
-    setRawEditorState: (setRawEditorState: RawDraftContentState) => void;
     reset: () => void;
 };
 
@@ -52,7 +48,6 @@ const useStore = create<Store>(persist(
         setSection: (section: Section) => set({ section }),
         setSubSection: (subSection: SubSection) => set({ subSection }),
         setActiveChat: (activeChat: Friend) => set({ activeChat }),
-        setRawEditorState: (rawEditorState: RawDraftContentState) => set({ rawEditorState }),
         reset: () => {
             set({
                 ...defaults,
@@ -63,7 +58,6 @@ const useStore = create<Store>(persist(
                 setSection: (section: Section) => set({ section }),
                 setSubSection: (subSection: SubSection) => set({ subSection }),
                 setActiveChat: (activeChat: Friend) => set({ activeChat }),
-                setRawEditorState: (rawEditorState: RawDraftContentState) => set({ rawEditorState }),
             }, true);
         }
     }),

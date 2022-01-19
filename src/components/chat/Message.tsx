@@ -6,9 +6,6 @@ import DoneAllRoundedIcon from '@mui/icons-material/DoneAllRounded';
 import DoneRoundedIcon from '@mui/icons-material/DoneRounded';
 import Box from "@mui/material/Box";
 import { ChatMessage } from "../../utils/ChatController";
-import { convertFromRaw, Editor, EditorState } from "draft-js";
-import MessageEditor from "./MessageEditor";
-import React from "react";
 
 
 const useStyles = makeStyles((theme) => ({
